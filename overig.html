@@ -8,44 +8,48 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Georgia, serif; background: #1a1a2e; color: #f0f0f0; min-height: 100vh; display: flex; flex-direction: column; }
-        header { background: #16213e; padding: 14px 16px; text-align: center; border-bottom: 3px solid #e94560; position: sticky; top: 0; z-index: 100; }
-        header h1 { font-size: 1.1rem; font-weight: normal; letter-spacing: 0.05em; }
+
         #video-container { width: 100%; background: #000; display: none; }
-        #video-title { background: #16213e; padding: 10px 14px; font-size: 0.9rem; text-align: center; border-bottom: 1px solid #0f3460; }
-        #video-wrapper { position: relative; width: 100%; padding-bottom: 50%; }
+        #video-title-balk { display: flex; align-items: center; justify-content: space-between; background: #16213e; padding: 10px 14px; border-bottom: 1px solid #0f3460; gap: 10px; }
+        #video-title { font-size: 0.9rem; flex: 1; }
+        #deel-knop { flex-shrink: 0; background: #e94560; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-family: Georgia, serif; font-size: 0.8rem; cursor: pointer; }
+        #video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; }
         #video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
         #welkom { padding: 28px 16px; text-align: center; color: #a0a0b0; }
         #welkom .icoon { font-size: 2.5rem; margin-bottom: 12px; }
         #welkom p { font-size: 0.95rem; line-height: 1.6; }
-        #knoppen-sectie { padding: 14px; flex: 1; }
-        .video-knop { display: flex; align-items: center; width: 100%; padding: 14px 16px; margin-bottom: 10px; background: #16213e; border: 2px solid #0f3460; border-radius: 10px; color: #f0f0f0; font-size: 0.95rem; font-family: Georgia, serif; text-align: left; cursor: pointer; gap: 12px; transition: background 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; line-height: 1.4; }
-        .video-knop:active { transform: scale(0.98); }
-        .video-knop.actief { background: #0f3460; border-color: #e94560; }
+
         #thema-tabs { display: flex; overflow-x: auto; background: #16213e; border-bottom: 2px solid #0f3460; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         #thema-tabs::-webkit-scrollbar { display: none; }
         .thema-tab { flex-shrink: 0; padding: 10px 14px; background: none; border: none; color: #a0a0b0; font-family: Georgia, serif; font-size: 0.82rem; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: color 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; }
         .thema-tab.actief { color: #f0f0f0; border-bottom-color: #e94560; }
-        .badge { flex-shrink: 0; border-radius: 6px; padding: 2px 7px; font-size: 0.8rem; white-space: nowrap; }
-        .niveau-badge { background: #e94560; color: #fff; }
+
+        #knoppen-sectie { padding: 14px; flex: 1; }
+        #aantal-label { font-size: 0.8rem; color: #a0a0b0; margin-bottom: 10px; }
+        #filter-balk { padding: 12px 14px; background: #16213e; border-bottom: 2px solid #0f3460; }
+        #filter-balk select { width: 100%; padding: 10px 12px; background: #0f3460; color: #f0f0f0; border: 2px solid #e94560; border-radius: 8px; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; }
+
+        .video-knop { display: flex; align-items: center; width: 100%; padding: 14px 16px; margin-bottom: 10px; background: #16213e; border: 2px solid #0f3460; border-radius: 10px; color: #f0f0f0; font-size: 0.95rem; font-family: Georgia, serif; text-align: left; cursor: pointer; gap: 12px; transition: background 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; line-height: 1.4; }
+        .video-knop:active { transform: scale(0.98); }
+        .video-knop.actief { background: #0f3460; border-color: #e94560; }
+        .niveau-badge { flex-shrink: 0; background: #e94560; color: #fff; border-radius: 6px; padding: 2px 7px; font-size: 0.8rem; }
         .video-knop.actief .niveau-badge { background: #fff; color: #e94560; }
-        .thema-badge { background: #0f3460; color: #a0c4ff; }
+        .thema-badge { flex-shrink: 0; background: #0f3460; color: #a0c4ff; border-radius: 6px; padding: 2px 7px; font-size: 0.75rem; white-space: nowrap; }
         .video-knop.actief .thema-badge { background: #e94560; color: #fff; }
         .nummer { flex-shrink: 0; background: #e94560; color: #fff; border-radius: 50%; width: 28px; height: 28px; line-height: 28px; text-align: center; font-size: 0.8rem; }
         .video-knop.actief .nummer { background: #fff; color: #e94560; }
-        #filter-balk { padding: 12px 14px; background: #16213e; border-bottom: 2px solid #0f3460; }
-        #filter-balk select { width: 100%; padding: 10px 12px; background: #0f3460; color: #f0f0f0; border: 2px solid #e94560; border-radius: 8px; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; }
-        #aantal-label { font-size: 0.8rem; color: #a0a0b0; margin-bottom: 10px; }
 </style>
 </head>
 <body>
-    <header id="hoofd-header"><h1>Oefenvideo's</h1></header>
-    <div id="welkom"><div class="icoon">▶</div><p>Kies een thema en dan een video.</p></div>
+    <div id="welkom"><div class="icoon">▶</div><p>Kies een video.</p></div>
+    
     <div id="video-container">
-        <div id="video-title"></div>
-        <div id="video-wrapper"><iframe id="youtube-iframe" src=""
-                referrerpolicy="strict-origin-when-cross-origin"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen></iframe></div>
+        <div id="video-title-balk">
+            <span id="video-title"></span>
+            <button id="deel-knop" onclick="deelVideo()">🔗 Deel</button>
+        </div>
+        <div id="video-wrapper"><iframe id="youtube-iframe" src="" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
     </div>
     <div id="nav-sectie">
         <div id="filter-balk">
@@ -475,9 +479,7 @@
     { id: "1p0m7VY2NlY", naam: "Zita en Anna (NT2 Breakthrough/Waystage, #NT2, 1.1, A1, 1.2, A2)", thema: "Niet opgegeven" }
         ];
         let actiefThema = '';
-        function init() {
-            maakKnoppen();
-        }
+        function init() { maakKnoppen(); }
         function filterThema() {
             actiefThema = document.getElementById('thema-filter').value;
             maakKnoppen();
@@ -490,7 +492,7 @@
             gefilterd.forEach(video => {
                 const knop = document.createElement('button');
                 knop.className = 'video-knop';
-                knop.innerHTML = `<span class="badge thema-badge">${video.thema}</span><span>${video.naam}</span>`;
+                knop.innerHTML = '<span class="thema-badge">' + video.thema + '</span><span>' + video.naam + '</span>';
                 knop.addEventListener('click', () => speelAf(video, knop));
                 lijst.appendChild(knop);
             });
@@ -499,26 +501,37 @@
         function speelAf(video, knop) {
             document.getElementById('welkom').style.display = 'none';
             document.getElementById('video-container').style.display = 'block';
-            const src = `https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&iv_load_policy=3&loop=0&modestbranding=1&rel=0`;
+            const src = 'https://www.youtube-nocookie.com/embed/' + video.id + '?autoplay=0&iv_load_policy=3&loop=0&modestbranding=1&rel=0';
             document.getElementById('youtube-iframe').src = src;
             document.getElementById('video-title').textContent = video.naam;
             document.querySelectorAll('.video-knop').forEach(b => b.classList.remove('actief'));
             if (knop) knop.classList.add('actief');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+        function deelVideo() {
+            const iframe = document.getElementById('youtube-iframe');
+            const match = iframe.src.match(/embed\/([^?]+)/);
+            if (!match) return;
+            const link = window.location.origin + window.location.pathname + '?v=' + match[1];
+            navigator.clipboard.writeText(link).then(() => {
+                const knop = document.getElementById('deel-knop');
+                knop.textContent = '✓ Gekopieerd!';
+                setTimeout(() => knop.textContent = '🔗 Deel', 2000);
+            });
+        }
 
         
         const params = new URLSearchParams(window.location.search);
         const directId = params.get('v');
         if (directId) {
-            document.getElementById('hoofd-header').style.display = 'none';
             document.getElementById('welkom').style.display = 'none';
             document.getElementById('nav-sectie').style.display = 'none';
             document.getElementById('video-container').style.display = 'block';
             const video = videos.find(v => v.id === directId);
-            const src = `https://www.youtube-nocookie.com/embed/${directId}?autoplay=1&iv_load_policy=3&loop=0&modestbranding=1&rel=0`;
+            const src = 'https://www.youtube-nocookie.com/embed/' + directId + '?autoplay=0&iv_load_policy=3&loop=0&modestbranding=1&rel=0';
             document.getElementById('youtube-iframe').src = src;
             document.getElementById('video-title').textContent = video ? video.naam : '';
+            document.getElementById('deel-knop').style.display = 'none';
         } else {
             document.getElementById('nav-sectie').style.display = 'block';
             init();
