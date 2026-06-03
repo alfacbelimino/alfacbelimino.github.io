@@ -12,7 +12,7 @@
         header h1 { font-size: 1.1rem; font-weight: normal; letter-spacing: 0.05em; }
         #video-container { width: 100%; background: #000; display: none; }
         #video-title { background: #16213e; padding: 10px 14px; font-size: 0.9rem; text-align: center; border-bottom: 1px solid #0f3460; }
-        #video-wrapper { position: relative; width: 100%; padding-bottom: 50%; }
+        #video-wrapper { position: relative; width: 100%; max-width: 800px; margin: 0 auto; padding-bottom: 50%; }
         #video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         #welkom { padding: 28px 16px; text-align: center; color: #a0a0b0; }
         #welkom .icoon { font-size: 2.5rem; margin-bottom: 12px; }
@@ -269,7 +269,7 @@
             document.getElementById('nav-sectie').style.display = 'none';
             document.getElementById('video-container').style.display = 'block';
             const video = videos.find(v => v.id === directId);
-            const src = `https://www.youtube-nocookie.com/embed/${directId}?autoplay=1&iv_load_policy=3&loop=0&modestbranding=1&rel=0`;
+            const src = `https://www.youtube-nocookie.com/embed/${directId}?autoplay=0&iv_load_policy=3&loop=0&modestbranding=1&rel=0`;
             document.getElementById('youtube-iframe').src = src;
             document.getElementById('video-title').textContent = video ? video.naam : '';
         } else {
