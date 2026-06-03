@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Oefenvideo's</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Georgia, serif; background: #1a1a2e; color: #f0f0f0; min-height: 100vh; display: flex; flex-direction: column; }
+        header { background: #16213e; padding: 14px 16px; text-align: center; border-bottom: 3px solid #e94560; position: sticky; top: 0; z-index: 100; }
+        header h1 { font-size: 1.1rem; font-weight: normal; letter-spacing: 0.05em; }
+        #video-container { width: 100%; background: #000; display: none; }
+        #video-title { background: #16213e; padding: 10px 14px; font-size: 0.9rem; text-align: center; border-bottom: 1px solid #0f3460; }
+        #video-wrapper { position: relative; width: 100%; padding-bottom: 50%; }
+        #video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        #welkom { padding: 28px 16px; text-align: center; color: #a0a0b0; }
+        #welkom .icoon { font-size: 2.5rem; margin-bottom: 12px; }
+        #welkom p { font-size: 0.95rem; line-height: 1.6; }
+        #knoppen-sectie { padding: 14px; flex: 1; }
+        .video-knop { display: flex; align-items: center; width: 100%; padding: 14px 16px; margin-bottom: 10px; background: #16213e; border: 2px solid #0f3460; border-radius: 10px; color: #f0f0f0; font-size: 0.95rem; font-family: Georgia, serif; text-align: left; cursor: pointer; gap: 12px; transition: background 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; line-height: 1.4; }
+        .video-knop:active { transform: scale(0.98); }
+        .video-knop.actief { background: #0f3460; border-color: #e94560; }
+        #thema-tabs { display: flex; overflow-x: auto; background: #16213e; border-bottom: 2px solid #0f3460; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        #thema-tabs::-webkit-scrollbar { display: none; }
+        .thema-tab { flex-shrink: 0; padding: 10px 14px; background: none; border: none; color: #a0a0b0; font-family: Georgia, serif; font-size: 0.82rem; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: color 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; }
+        .thema-tab.actief { color: #f0f0f0; border-bottom-color: #e94560; }
+        .badge { flex-shrink: 0; border-radius: 6px; padding: 2px 7px; font-size: 0.8rem; white-space: nowrap; }
+        .niveau-badge { background: #e94560; color: #fff; }
+        .video-knop.actief .niveau-badge { background: #fff; color: #e94560; }
+        .thema-badge { background: #0f3460; color: #a0c4ff; }
+        .video-knop.actief .thema-badge { background: #e94560; color: #fff; }
+        .nummer { flex-shrink: 0; background: #e94560; color: #fff; border-radius: 50%; width: 28px; height: 28px; line-height: 28px; text-align: center; font-size: 0.8rem; }
+        .video-knop.actief .nummer { background: #fff; color: #e94560; }
+        #filter-balk { padding: 12px 14px; background: #16213e; border-bottom: 2px solid #0f3460; }
+        #filter-balk select { width: 100%; padding: 10px 12px; background: #0f3460; color: #f0f0f0; border: 2px solid #e94560; border-radius: 8px; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; }
+        #aantal-label { font-size: 0.8rem; color: #a0a0b0; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+    <header id="hoofd-header"><h1>Oefenvideo's</h1></header>
+    <div id="welkom"><div class="icoon">▶</div><p>Kies een thema en dan een video.</p></div>
+    <div id="video-container">
+        <div id="video-title"></div>
+        <div id="video-wrapper"><iframe id="youtube-iframe" src=""
+                referrerpolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe></div>
+    </div>
+    <div id="nav-sectie">
+        <div id="filter-balk">
+            <select id="thema-filter" onchange="filterThema()">
+                <option value="">— Alle thema's (381 video's) —</option>
+            <option value="Afspraak">Afspraak</option>
+            <option value="Afval/klimaat">Afval/klimaat</option>
+            <option value="Beleving">Beleving</option>
+            <option value="Consument">Consument</option>
+            <option value="Corona">Corona</option>
+            <option value="Dagen">Dagen</option>
+            <option value="Datum">Datum</option>
+            <option value="De weg">De weg</option>
+            <option value="Diensten">Diensten</option>
+            <option value="Documenten">Documenten</option>
+            <option value="Eten en drinken">Eten en drinken</option>
+            <option value="Familie">Familie</option>
+            <option value="Gezondheid">Gezondheid</option>
+            <option value="Hoe gaat het">Hoe gaat het</option>
+            <option value="IZOS">IZOS</option>
+            <option value="Instructies">Instructies</option>
+            <option value="Kleding">Kleding</option>
+            <option value="Klok">Klok</option>
+            <option value="Maanden">Maanden</option>
+            <option value="Niet opgegeven">Niet opgegeven</option>
+            <option value="Personalia">Personalia</option>
+            <option value="Problemen">Problemen</option>
+            <option value="School">School</option>
+            <option value="School - personalia">School - personalia</option>
+            <option value="Uitnodiging">Uitnodiging</option>
+            <option value="Verkeer">Verkeer</option>
+            <option value="Vll">Vll</option>
+            <option value="Vrije tijd">Vrije tijd</option>
+            <option value="Weer">Weer</option>
+            <option value="Werk">Werk</option>
+            <option value="Winkel">Winkel</option>
+            <option value="Wonen">Wonen</option>
+            </select>
+        </div>
+        <div id="knoppen-sectie">
+            <div id="aantal-label"></div>
+            <div id="knoppen-lijst"></div>
+        </div>
+    </div>
+    <script>
+        const videos = [
+    { id: "af8AIxeEi2Q", naam: "Afspraak maken gemeentehuis", thema: "Afspraak" },
+    { id: "04dlAMAKTNA", naam: "Afspraak maken tandarts", thema: "Afspraak" },
+    { id: "A9MlSQSEf50", naam: "Bent u getrouwd?", thema: "Personalia" },
+    { id: "SpD-XFZuboE", naam: "CORONA-dagboek d.d. 19-04-2020: lied", thema: "Corona" },
+    { id: "yJmqS5cMKtA", naam: "herhaling kern 8", thema: "Vll" },
+    { id: "DzvDatSsJ3w", naam: "Hoe gaat het?", thema: "Hoe gaat het" },
+    { id: "Sqyq-ex7iLg", naam: "Hoe moet je de schrijfoefening maken", thema: "Niet opgegeven" },
+    { id: "XLtccjiDE4I", naam: "In het immokantoor", thema: "Wonen" },
+    { id: "t6D11mOPmfY", naam: "IZOS antwoorden met &#39;nee&#39;", thema: "IZOS" },
+    { id: "rHPr84VCib4", naam: "IZOS zinnen met &#39;geen&#39;", thema: "IZOS" },
+    { id: "EikagB-RNFk", naam: "IZOS zinnen met &#39;ik ga naar …&#39;", thema: "IZOS" },
+    { id: "KcZoiR9Bbbo", naam: "IZOS zinnen met &#39;ik jij hij zij&#39;", thema: "IZOS" },
+    { id: "SyB3YYRmq8c", naam: "IZOS zinnen met &#39;ik&#39; (makkelijk)", thema: "IZOS" },
+    { id: "C5p5ANxCvzM", naam: "IZOS zinnen met &#39;niet&#39;", thema: "IZOS" },
+    { id: "QomHx4Gr-aE", naam: "Module 1: Dialoog 12: Inschrijven voor de Nederlandse les", thema: "School - personalia" },
+    { id: "CXCmyM-VY3c", naam: "Module 1: Dialoog 21 Op de weg", thema: "Verkeer" },
+    { id: "xeTag1Lwntg", naam: "Module 1: Dialoog 25:  Ik kom niet naar de les", thema: "School" },
+    { id: "mcYybEI-bng", naam: "Module 2: Wat is er", thema: "Gezondheid" },
+    { id: "kAFpMThcA04", naam: "Nederlandse les start - les 1", thema: "School" },
+    { id: "l2jo_SBlMY0", naam: "Stappenplan voor cursisten - Zoom", thema: "Niet opgegeven" },
+    { id: "re=youtu.be", naam: "Tafel dekken", thema: "Eten en drinken" },
+    { id: "xUEmQQnXXYQ", naam: "Telefoneren naar de huisbaas", thema: "Wonen" },
+    { id: "gx6ImyUDYyU", naam: "Veel of heel?", thema: "Niet opgegeven" },
+    { id: "pdlCgHLH6Fg", naam: "VLL Kern 4 - herhaling - deel 1", thema: "Niet opgegeven" },
+    { id: "Z_hM5O4c1JY", naam: "VLL Kern 5 - herhaling - deel 1", thema: "Niet opgegeven" },
+    { id: "G5fx4pps3uc", naam: "VLL Kern 6 - herhaling - deel 1", thema: "Niet opgegeven" },
+    { id: "FYKO-80S41U", naam: "VLL Kern start en 1 - herhaling - deel 1", thema: "Niet opgegeven" },
+    { id: "_jI8KiIEpP0", naam: "Wat is jouw beroep?", thema: "Werk" },
+    { id: "xnBqELcRgj0", naam: "Wat vind je van de oefening", thema: "Beleving" },
+    { id: "sV1cnO-iWFo", naam: "Wie ben jij?", thema: "Personalia" },
+    { id: "5f78GkaaeXM", naam: "Ziek zijn - klachten formuleren", thema: "Gezondheid" },
+    { id: "yUezUDGg5zY", naam: "kern 3 - meeleestekst - een peer met pit", thema: "Niet opgegeven" },
+    { id: "DUIk6Cpnk-g", naam: "kern 3 - meeleestekst - een roos met een ...", thema: "Niet opgegeven" },
+    { id: "jg7bsCDj-Z8", naam: "kern 3 - meeleestekst - ik mik en ik mep", thema: "Niet opgegeven" },
+    { id: "zkNXhnIhRfc", naam: "kern 3 - meeleestekst - ik zoek in een boek", thema: "Niet opgegeven" },
+    { id: "HRUfiBwkWnc", naam: "kern 3 - meeleestekst - naar de maan", thema: "Niet opgegeven" },
+    { id: "kRSwl8VFgIE", naam: "kern 3 - meeleestekst - tik tik", thema: "Niet opgegeven" },
+    { id: "agK1O0Ggvj4", naam: "kern 3 - meeleestekst - toon vaart", thema: "Niet opgegeven" },
+    { id: "VGf36NQ1Ytw", naam: "Zus maakt de soep", thema: "Niet opgegeven" },
+    { id: "CxZpMzRRq7s", naam: "Onze tuin", thema: "Niet opgegeven" },
+    { id: "94377482243", naam: "IZOS Wat doe jij graag? Ik ... graag/niet graag", thema: "Beleving" },
+    { id: "sIvR_EzRlXQ", naam: "2RT - 01. Proficiat", thema: "Beleving" },
+    { id: "09isBS0bVAI", naam: "2RT - 02. Hoe gaat het", thema: "Beleving" },
+    { id: "Ccl43agdIvs", naam: "2RT - 03. Ik heb het warm", thema: "Beleving" },
+    { id: "-XoeH4H8ctw", naam: "2RT - 04. Wat doe jij graag", thema: "Beleving" },
+    { id: "_oaQtXTZ9ho", naam: "2RT - 00 Hoe gaat het", thema: "Beleving" },
+    { id: "mcYybEI-bng", naam: "2RT - 00 Wat is er?", thema: "Beleving" },
+    { id: "OmqLxnFV0jU", naam: "Wat vind jij leuk", thema: "Beleving" },
+    { id: "3XOKS9J4JsU", naam: "Ik ga naar ...", thema: "Uitnodiging" },
+    { id: "_sbMJtllYbE", naam: "Voorzetsels_waar is de plant", thema: "Instructies" },
+    { id: "qBaW2lWsPSM", naam: "Welk weer is het vandaag?", thema: "Weer" },
+    { id: "5maavz1ytpU", naam: "Op bezoek", thema: "Uitnodiging" },
+    { id: "cugijtSdpF4", naam: "IZOS zinnen: ik heb (geen)", thema: "Niet opgegeven" },
+    { id: "JOj0NdAxPeA", naam: "De klok: het uur", thema: "Klok" },
+    { id: "1fxwcmxZtQg", naam: "IZOS: op bezoek", thema: "Uitnodiging" },
+    { id: "Dr6XhY4wjso", naam: "IZOS: wil jij (huishoudelijke taken) aub?", thema: "Instructies" },
+    { id: "4bzeHMXhvy0", naam: "IZOS: personalia (vraag en antwoord)", thema: "Personalia" },
+    { id: "JEaXThCjf5A", naam: "IZOS: ik vind ... (mening)", thema: "Beleving" },
+    { id: "VcpTWrvHhCM", naam: "IZOS: afspraak maken + klachten/ziektes", thema: "Gezondheid" },
+    { id: "Dka4sWzhzkk", naam: "VLL Kern start woordflits", thema: "Niet opgegeven" },
+    { id: "EBF9WYldHvA", naam: "Je huis beschrijven  1", thema: "Wonen" },
+    { id: "v1EKTEyqeaU", naam: "je huis beschrijven 2", thema: "Wonen" },
+    { id: "BzbwiWCUfpM", naam: "mijn huis", thema: "Wonen" },
+    { id: "mNDMk6hNvbM", naam: "een slecht huis", thema: "Wonen" },
+    { id: "L5h58Mx9ywY", naam: "Dagen van de week", thema: "Dagen" },
+    { id: "0yd5OYob0EE", naam: "l - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "ccPj4s7UqWU", naam: "Redenen om naar het gemeentehuis te gaan", thema: "Diensten" },
+    { id: "IMSCdbCeF9E", naam: "Nederlandse les - les 2", thema: "School" },
+    { id: "Wwg03BXhk4I", naam: "Schoolmateriaal - TPR - tellen", thema: "School" },
+    { id: "ha2LyxNbl07", naam: "Hoe heet jij? - Kennismakingsvragen", thema: "Personalia" },
+    { id: "YPabfhWT0p4", naam: "Waar woon jij? Compilatie", thema: "Personalia" },
+    { id: "A9MlSQSEf50", naam: "Bent u getrouwd? Gezinssituatie", thema: "Personalia" },
+    { id: "zkeizEqKYmk", naam: "Heb jij kinderen?", thema: "Personalia" },
+    { id: "ZiOxgo5HbQM", naam: "Leer tellen tot 10", thema: "Niet opgegeven" },
+    { id: "w_nNIU88aVI", naam: "Tellen tot 20", thema: "Niet opgegeven" },
+    { id: "L5h58Mx9ywY", naam: "Dagen -Welke dag is het vandaag?", thema: "Dagen" },
+    { id: "52ssyNvS73w", naam: "Maanden - Welke maand is het?", thema: "Datum" },
+    { id: "AB2Txljb8q4", naam: "De tijd - Het uur", thema: "Klok" },
+    { id: "PXWNdABciEI", naam: "Wat is je naam? - Personaliavragen fragment NSR", thema: "Personalia" },
+    { id: "xeTag1Lwntg", naam: "Ik kom morgen niet naar de les", thema: "School" },
+    { id: "wt9LG1gHr0s", naam: "Ga je mee naar de markt", thema: "Uitnodiging" },
+    { id: "NNFakIqG5CQ", naam: "Ga je mee - ja - Luister en herhaal", thema: "Uitnodiging" },
+    { id: "lZ_5FGIfAok", naam: "Ga je mee - nee - Luister en herhaal", thema: "Uitnodiging" },
+    { id: "Np-rthImygQ", naam: "Waar is de wc?", thema: "De weg" },
+    { id: "WYQSYZhuoek", naam: "Waar is de uitgang", thema: "De weg" },
+    { id: "_QT1neAK6Mw", naam: "Waar is ...? Taalriedel - Luister en Herhaal", thema: "De weg" },
+    { id: "NdptREys5II", naam: "Problemen in huis", thema: "Wonen" },
+    { id: "ZFVmnRn8Etw", naam: "Vragen in de klas", thema: "School" },
+    { id: "67n5Vl6kN6E", naam: "De noordenwind en de zon", thema: "Niet opgegeven" },
+    { id: "K_ldK76-Eok", naam: "sch", thema: "Niet opgegeven" },
+    { id: "Fx0CplEXfvs", naam: "eu", thema: "Niet opgegeven" },
+    { id: "xFwPTG62tj4", naam: "oo oe uu eu ui", thema: "Niet opgegeven" },
+    { id: "CSKeqRkcqho", naam: "ui", thema: "Niet opgegeven" },
+    { id: "48qUg5YkVnc", naam: "ch", thema: "Niet opgegeven" },
+    { id: "uCZedtW_2Fo", naam: "ou", thema: "Niet opgegeven" },
+    { id: "2DydJxTE_Ns", naam: "ng", thema: "Niet opgegeven" },
+    { id: "P570NsOABbk", naam: "ei", thema: "Niet opgegeven" },
+    { id: "d8t39R87axo", naam: "ij", thema: "Niet opgegeven" },
+    { id: "YSmheI8Zu6c", naam: "oe", thema: "Niet opgegeven" },
+    { id: "qknLm_uTK2k", naam: "uu", thema: "Niet opgegeven" },
+    { id: "hHupFi-fSh8", naam: "u", thema: "Niet opgegeven" },
+    { id: "h9QMMRcJ-D8", naam: "De maanden van het jaar", thema: "Maanden" },
+    { id: "6bMZobAMmLQ", naam: "Fotoverhaal - alles gaat mis", thema: "Niet opgegeven" },
+    { id: "9kpjelSSKlk", naam: "Dirk zoekt een huis (verhaal van Dirk deel 1)Fotoverhaal Nt 2 Alfa, Brusselleer", thema: "Niet opgegeven" },
+    { id: "kOYzTsfiu9c", naam: "Dirk wil verhuizen maar ....(verhaal van Dirk deel 2) Nt 2 Alfa Brusselleer ,Vanessa Van Assche", thema: "Niet opgegeven" },
+    { id: "6pUYC-XQEuc", naam: "Waar is ....? Ik zoek de weg. NT 2 Alfa, Vanessa Van Assche Basiseducatie Brussel", thema: "Niet opgegeven" },
+    { id: "MA2o7Q6N26k", naam: "Bij de apotheek, instructies. Nt 2 Alfa Vanessa Van Assche, Brusselleer", thema: "Niet opgegeven" },
+    { id: "AfFWROaUxWA", naam: "Hoeveel ? info vragen Nt 2 Alfa Vanessa Van Assche , Brussellee", thema: "Klok" },
+    { id: "dPIQD6YMlgw", naam: "Het ontbijt , Nt 2 Alfa fotoverhaal, Brusselleer Vanessa Van Assche", thema: "Niet opgegeven" },
+    { id: "4uR1BIzhix8", naam: "Hoe is jouw appartement, jouw huis ? NT 2 alfa Vanessa Van Assche Brusselleer", thema: "Niet opgegeven" },
+    { id: "ND9spqDzHVo", naam: "Wie ben jij ? Fotoverhaal Nt 2 Alfa Brusselleer , Vanessa Van Assche", thema: "Niet opgegeven" },
+    { id: "W2WXNatKHRg", naam: "Lili is de baas : een fotoverhaal voor Nt 2 alfa cursisten. Brusselleer, Vanessa Van Assche", thema: "Niet opgegeven" },
+    { id: "VzR3ZyezeCc", naam: "Ze vertellen over België....fotoverhaal Nt2 alfa , Brusselleer Vanessa Van Assche.", thema: "Niet opgegeven" },
+    { id: "Gu2zgRM3FS4", naam: "Wat heb je gisteren gedaan?", thema: "Niet opgegeven" },
+    { id: "R27FuWfyDBk", naam: "Problemen met kleren", thema: "Kleding" },
+    { id: "8Cj81D_Rnyc", naam: "Beroepen", thema: "Werk" },
+    { id: "B1GZhDvl-As", naam: "Activiteiten + de klok", thema: "Klok" },
+    { id: "WomJC4lz-JA", naam: "Het weer", thema: "Weer" },
+    { id: "5JaLgnTED6c", naam: "De klok - Het uur -  deel 1", thema: "Klok" },
+    { id: "uIT6-k6ECZg", naam: "De klok - Het uur -  deel 2", thema: "Klok" },
+    { id: "Z9WLvcl_Z9w", naam: "De klok - Half uur deel 1", thema: "Klok" },
+    { id: "bz3bdaXrNuc", naam: "De klok - Half uur deel 2", thema: "Klok" },
+    { id: "AcPYYfEfnr8", naam: "De klok - het uur", thema: "Klok" },
+    { id: "y-DTwwj77JQ", naam: "De klok - het half uur", thema: "Klok" },
+    { id: "fDA4jJRgmGQ", naam: "dagelijkse handelingen", thema: "Niet opgegeven" },
+    { id: "u-mz-rdYm0o", naam: "Hoe gaat het? Wat is er?", thema: "Beleving" },
+    { id: "7LoCPX3B6hw", naam: "Wat vind jij van ...? Leuk - niet leuk.", thema: "Beleving" },
+    { id: "rGZ4RgJnCa4", naam: "Izos: ik wijs. Ik knip. Ik plak. ...", thema: "IZOS" },
+    { id: "9Gp-oyTRnRc", naam: "Mag ik een koekje, AUB?", thema: "Uitnodiging" },
+    { id: "Ubc8lMgF-po", naam: "Breng je turngerief mee.", thema: "School" },
+    { id: "blEtN0C2BvU", naam: "Waar is de bakker? Eerste straat rechts.", thema: "De weg" },
+    { id: "JQ44RveifqI", naam: "voorzetsels", thema: "Instructies" },
+    { id: "ing=1&rel=0", naam: "voorzetsels", thema: "Niet opgegeven" },
+    { id: "TyjYaK84Sbo", naam: "Verkouden (Lied)", thema: "Gezondheid" },
+    { id: "ja6zqdc5KLM", naam: "Mag ik een afspraak", thema: "Afspraak" },
+    { id: "UcoFXVi0fGQ", naam: "Hobby&#39;s - Ik ... graag", thema: "Beleving" },
+    { id: "u0GMbToRJhE", naam: "Mag ik je pen", thema: "School" },
+    { id: "f5h2HtbUTtU", naam: "Maandenlied", thema: "Maanden" },
+    { id: "crC2MFe_rr0", naam: "Lied - tel van 1 tot 10", thema: "Niet opgegeven" },
+    { id: "1SVJYgaCINE", naam: "Lied - Verjaardag - Lang zal ze leven", thema: "Niet opgegeven" },
+    { id: "M1T4XU2Tqfk", naam: "Lied - ga je mee met mij", thema: "Uitnodiging" },
+    { id: "Fhud1aD2yMo", naam: "Lied - goedemorgen", thema: "Niet opgegeven" },
+    { id: "3CFVuZHh7Ng", naam: "Lied - Ga je mee?", thema: "Uitnodiging" },
+    { id: "KwCxLnu3Q7c", naam: "Lied - Op de bus", thema: "Verkeer" },
+    { id: "K20bY9QUpHc", naam: "Lied - Mag ik je pen eens", thema: "School" },
+    { id: "t7G0o8&t=6s", naam: "het huis, huishoudelijke taken", thema: "Wonen" },
+    { id: "qCY3ZAIrE-g", naam: "Dialoog 7: Heb je kinderen - film", thema: "Personalia" },
+    { id: "Uz-_4T_mLOE", naam: "De Voorzetsels &#39;de jongens staat ... de doos&#39;", thema: "Instructies" },
+    { id: "Wc-WkJalFTE", naam: "Ik ga naar ... Ga je mee?", thema: "Uitnodiging" },
+    { id: "pIMm8XV-GsE", naam: "Mag ik een afspraak, AUB? + dagdelen", thema: "Afspraak" },
+    { id: "Rd-b6ldJibE", naam: "De dag van Mariama - klok - Half uur", thema: "Klok" },
+    { id: "Kx4r19Yvt4o", naam: "groenten en fruit bestellen", thema: "Winkel" },
+    { id: "ubjLWx8OKfY", naam: "vragen bij de dokter en apotheker", thema: "Gezondheid" },
+    { id: "ChaRTdkLQv0", naam: "De weg vragen in een openbaar gebouw.", thema: "Instructies" },
+    { id: "SwBRDb3yY04", naam: "Mama, mag ik een snoepje?", thema: "Beleving" },
+    { id: "3M5kfT7JFHg", naam: "mag ik een afspraak?", thema: "Afspraak" },
+    { id: "LS_UmPMIfEQ", naam: "1RT - Dialoog: Ik weet het niet", thema: "Niet opgegeven" },
+    { id: "Uivh8djjlbo", naam: "Familie: wie is wie", thema: "Familie" },
+    { id: "RvFuq5jhuNM", naam: "Ruimetelijke orientatie - boven, onder, links, rechts", thema: "Niet opgegeven" },
+    { id: "Y7nr4GQ8BEg", naam: "Openingsuren", thema: "Niet opgegeven" },
+    { id: "hQJcK_t_MU0", naam: "De kleuren+schoolse benodigdheden", thema: "School" },
+    { id: "Ty6Mdm9Vtrk", naam: "De verhalen van de hodja: de thee", thema: "Niet opgegeven" },
+    { id: "B0yiDimePlQ", naam: "De verhalen van de hodja: de pan", thema: "Niet opgegeven" },
+    { id: "Ysai1MO1qnA", naam: "Ik praat over mijn dag", thema: "Niet opgegeven" },
+    { id: "W7axFspQwHI", naam: "Wat doe je in de klas - instructies", thema: "Instructies" },
+    { id: "E1Wo9MszTYs", naam: "bellen naar school - ik  ben ziek", thema: "Gezondheid" },
+    { id: "ROwICYPS9S8", naam: "ik kom niet naar school - redenen", thema: "School" },
+    { id: "JgqGVYrZY5I", naam: "Luister en doe mee", thema: "Instructies" },
+    { id: "F5lfQlmsL60", naam: "ik ga naar ... plaatsen/ diensten", thema: "Niet opgegeven" },
+    { id: "EVppiGMEzZI", naam: "Fatima Tas", thema: "Niet opgegeven" },
+    { id: "zhRLU9XF1hI", naam: "Ga je mee - Verhaal", thema: "Uitnodiging" },
+    { id: "_PcccecTqBc", naam: "De taart - verhaal", thema: "Niet opgegeven" },
+    { id: "I0ucUb9Ss2A", naam: "2MT - 05. Dat is moeilijk", thema: "Beleving" },
+    { id: "8IC6NcfqcyI", naam: "2MT - 07. Wat eetjij graag", thema: "Beleving" },
+    { id: "MbqM_Ey09_6", naam: "Boris en Binti", thema: "Niet opgegeven" },
+    { id: "ODQkZcH4JSI", naam: "lekkende kraan herstellen", thema: "Instructies" },
+    { id: "IrFbT6WDmjQ", naam: "De klok: kwart over (deel 1) anal+dig Nacht en VM", thema: "Klok" },
+    { id: "9ZkCoOx7gUQ", naam: "De klok: kwart over (deel 2) anal+dig NM Avond", thema: "Klok" },
+    { id: "5JaLgnTED6c", naam: "De klok: het uur (deel 1) anal+dig Nacht+VM", thema: "Klok" },
+    { id: "uIT6-k6ECZg", naam: "De klok: het uur (deel 2) anal+dig NM avond", thema: "Klok" },
+    { id: "Z9WLvcl_Z9w", naam: "De klok: half uur (deel 1): anal+dig Nacht+VM", thema: "Klok" },
+    { id: "XrNuc&t=33s", naam: "De klok: half uur (deel 2): anal+dig NM+Avond", thema: "Klok" },
+    { id: "ZJ-QUjJL7Gc", naam: "De klok: kwart voor (deel 1) anal+dig Nacht+VM", thema: "Klok" },
+    { id: "HGbNShOIzQU", naam: "De klok: kwart voor (deel 2) anal+dig NM+Avond", thema: "Klok" },
+    { id: "vIycHbB1cnI", naam: "De nummers van 0 tot 100 - ingesproken", thema: "Niet opgegeven" },
+    { id: "LRHvyf1JNBo", naam: "2MT - 08. Mag ik een afspraak?", thema: "Niet opgegeven" },
+    { id: "W6P9HdXJ-pw", naam: "Mag ik een afspraak - Taalriedel om vraag in te oefenen", thema: "Afspraak" },
+    { id: "AA8vc-FoWhA", naam: "Emoties  - Ik ben blij, boos, bang,... want...", thema: "Beleving" },
+    { id: "BaToD_BCqKa", naam: "Uitspraak klanken", thema: "Niet opgegeven" },
+    { id: "FhxulSzE7RU", naam: "Wat doe/eet/drink jij graag - verhaaml Mamadou", thema: "Beleving" },
+    { id: "IJ5hVUTn0AQ", naam: "1RT - 01. Wie ben jij?", thema: "Personalia" },
+    { id: "cUmGDQKMSF0", naam: "1RT - 02. Wablieft? Wie ben jij?", thema: "Personalia" },
+    { id: "4SyEYidTzmg", naam: "1RT - 03. Hoe gaat het?", thema: "Beleving" },
+    { id: "oGj-yHKUQIk", naam: "ik kom niet naar school + redenen", thema: "School" },
+    { id: "V5rARJFgjiQ", naam: "ik kom niet naar de afspraak", thema: "School" },
+    { id: "BGNhxy4EfKM", naam: "naar het recyclagepark", thema: "Afval/klimaat" },
+    { id: "oY493OkbWz0", naam: "afval sorteren in Leopoldsburg", thema: "Afval/klimaat" },
+    { id: "6dA8q7NTIBE", naam: "rangtelwoorden", thema: "Niet opgegeven" },
+    { id: "n7mj9AAreTY", naam: "Ik werk halftijds.", thema: "Werk" },
+    { id: "V5rARJFgjiQ", naam: "afspraak afzeggen", thema: "Afspraak" },
+    { id: "hQJcK_t_MU0", naam: "Kleuren", thema: "Niet opgegeven" },
+    { id: "BnLgvmRnO-4", naam: "Hoeveel - Tellen met schoolvoorwerpen", thema: "School" },
+    { id: "bVJpgeHIIOI", naam: "Wat doet de man &#39;smorgens", thema: "Niet opgegeven" },
+    { id: "VL6ep6ipx_M", naam: "Verhaaltjes over pijn/ emoties", thema: "Beleving" },
+    { id: "uRYzYatvkdM", naam: "Klok: hele en halve uren", thema: "Klok" },
+    { id: "aIUBr9MOAes", naam: "Ik eet graag - ik eet niet graag - pictozinnen", thema: "Beleving" },
+    { id: "U-gig1wQSek", naam: "Ik eet graag - ik eet niet graag (let op aan het einde een doe opdracht voor cursisten)", thema: "Beleving" },
+    { id: "MG1b899hUCU", naam: "Wie wat waar wanneer - vraagwoorden", thema: "Niet opgegeven" },
+    { id: "i4jyXFbl2TY", naam: "BT3 - ik kook - instructies + groenten  (let op aan het einde een doe opdracht voor cursisten)", thema: "Eten en drinken" },
+    { id: "THOrSbuT1yU", naam: "De etalage kledij + kleuren + hoeveel kost", thema: "Kleding" },
+    { id: "DhYwKSgEnUU", naam: "BT3 Ik bak platbrood", thema: "Eten en drinken" },
+    { id: "HsR6hwwQhXc", naam: "BT4 De problemen van het huis", thema: "Wonen" },
+    { id: "iLpFnN2z_LE", naam: "mag de deur open?", thema: "Beleving" },
+    { id: "YW6ir4&t=3s", naam: "recept: zalm, broccoli, prei, pasta", thema: "Instructies" },
+    { id: "T3ymsNB60pQ", naam: "Moussa en Hannah zoeken een huis", thema: "Wonen" },
+    { id: "sHcu_YfGVLs", naam: "Moussa zoekt een huis op het internet", thema: "Wonen" },
+    { id: "e-cPKIBh_Ko", naam: "Lien is ziek en gaat naar de apotheek", thema: "Gezondheid" },
+    { id: "ZaVvBR5huqU", naam: "Personalia vragen en antwoorden", thema: "Personalia" },
+    { id: "7BK2ISNJiDY", naam: "Tellen tot 10 - herhaal", thema: "Niet opgegeven" },
+    { id: "GDM-fFjuelY", naam: "Tellen 11-20 - herhaal", thema: "Niet opgegeven" },
+    { id: "vLJLlO8lPTQ", naam: "schoolvoorwerpen", thema: "School" },
+    { id: "MFVrTeL6jiA", naam: "Documenten herkennen", thema: "Documenten" },
+    { id: "hn2oSeFKj2g", naam: "Lied: waar vind ik ....", thema: "Consument" },
+    { id: "4b08YcUrxGc", naam: "3RT - 10. Ik ga... Ga je mee ?", thema: "Uitnodiging" },
+    { id: "-vX5ycE-9CA", naam: "3RT - 10. Ik ga... Ga je mee ? + Herhaal (Taalriedel)", thema: "Uitnodiging" },
+    { id: "Hccx6I-yBeg", naam: "Ik  kom niet werken + Herhaal (Taalriedel)", thema: "Werk" },
+    { id: "TrvMgVwfRQE", naam: "1RT 04. Wat is jouw familienaam", thema: "Personalia" },
+    { id: "wfWim_LljbY", naam: "Huishoudelijke taken (wel met tekst voor NT2)", thema: "Wonen" },
+    { id: "7G0o8&t=80s", naam: "Het huis - huishoudelijke taken - vraag - bevel", thema: "Wonen" },
+    { id: "esxoFd_WCrg", naam: "Afspraak met de vochtexpert", thema: "Afspraak" },
+    { id: "pagFCNQu_-g", naam: "Afspraak met de plakker/stukadoor", thema: "Afspraak" },
+    { id: "ETqOnYnTsVs", naam: "Afspraak met de dokter", thema: "Afspraak" },
+    { id: "-pk-q18cn5A", naam: "oe - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "eiegJ8dgXbA", naam: "ui - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "O8I_nqvzWXg", naam: "ij - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "-FN_Bcx0MTQ", naam: "ou - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "4UVi-wp2hVk", naam: "au - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "EomNJVgEc1k", naam: "ei - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "c_G8yupXPOQ", naam: "ie - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "i0xbtROt32g", naam: "ee - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "zEAn8ux4TfA", naam: "oo - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "mnlwaJacHVA", naam: "aa - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "gjLB3scQu7s", naam: "k - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "HmUZsXCuUY4", naam: "n - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "PEDBoca88E8", naam: "m - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "RtCQPAydQl4", naam: "g - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "oJxZVsiRkj4", naam: "z - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "r6F5eN0-jwU", naam: "r - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "tXhk2E00X0c", naam: "w - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "y37sUvohplU", naam: "u - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "0RIOog_HVR8", naam: "t - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "OJ7bbXdfMg4", naam: "s - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "bn_GGgzdBiU", naam: "p - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "VVo-XoRzA1M", naam: "o - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "nWgghaA92d8", naam: "j - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "mSOYUyxOYfc", naam: "i  - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "L2QFTaRz6sg", naam: "h  - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "1v6q05wj_9Y", naam: "f - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "OpG7Zgog3rM", naam: "v - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "MQS8im5JgKk", naam: "a - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "KDGFnRc1neI", naam: "b - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "x4JJQzQDFzE", naam: "d - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "wyzBF8bELBc", naam: "e - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "qodowLX5yDI", naam: "p - schrijfwijze", thema: "Niet opgegeven" },
+    { id: "ryJ048vKKg0", naam: "p - schrijfwijze - WB- deel 2", thema: "Niet opgegeven" },
+    { id: "THVct6AKMQk", naam: "uu - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "fhOguh9G2nA", naam: "eu - uitspraak + schrijfwijze", thema: "Niet opgegeven" },
+    { id: "24gsxUeM98E", naam: "Bij de dokter - aanmelden", thema: "Gezondheid" },
+    { id: "zb9_KTUwUD4", naam: "Bij de dokter - binnengeroepen worden", thema: "Gezondheid" },
+    { id: "TbW1JNJbllI", naam: "Bij de dokter - het probleem", thema: "Gezondheid" },
+    { id: "4_cn65bSsNI", naam: "Bij de dokter - de diagnose", thema: "Gezondheid" },
+    { id: "o99OBVyPKjE", naam: "Bij de dokter - de bloedafname", thema: "Gezondheid" },
+    { id: "4RvHfIHTqhQ", naam: "Een bezoek aan de dokter", thema: "Gezondheid" },
+    { id: "jPU0oXolRWg", naam: "Filmpje picture talk", thema: "Niet opgegeven" },
+    { id: "Bh3z87MrGgc", naam: "Vraagwoorden", thema: "Niet opgegeven" },
+    { id: "IKxvEhdT_Fg", naam: "de klok tot op het kwartier korte oefening", thema: "Klok" },
+    { id: "Kx4r19Yvt4o", naam: "Eten en drinken", thema: "Eten en drinken" },
+    { id: "moOpsY73ZCE", naam: "Nasim (2) stuurt een bericht (#NT2, #learndutch, Breakthrough, A1, 1.1, Waystage, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "BkIHhUsQh1M", naam: "Fouad en Nasim (1) sturen berichten (#NT2, #learndutch, Breakthrough, A1, 1.1, Waystage, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "iFNfe3YWj5c", naam: "Valentijn / Liefde / 14 februari (#NT2, #learndutch, Breakthrough, A1, 1.1, Waystage, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "WVae4BWq9zs", naam: "Afval sorteren (#NT2, #learndutch, Waystage, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "3BXHxwRs31o", naam: "Kan ik dit ruilen? Kledij ruilen (#NT2, #learndutch, Waystage, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "T-UZ_zgt-LM", naam: "Wintersolden / Kledij (#NT2, #learndutch, Waystage, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "KJFG3tWREbc", naam: "Welk materiaal is het? (#NT2, #learndutch, Waystage, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "KYmIH9mRz6U", naam: "Beter eten (#NT2 , #learndutch, Waystage, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "fsY1r_DATIo", naam: "Wat zijn ze aan het doen? Winter in het park (#NT2 , #learndutch, Waystage, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "VpQcgDhXyKQ", naam: "Beste wensen! (#gelukkignieuwjaar #NT2, #learndutch, #nederlands leren, 1.1, 1.2, A1, A2)", thema: "Niet opgegeven" },
+    { id: "5SgnCURLWQI", naam: "Goede buren / klachten (#NT2, #learndutch, 1.2, A2)", thema: "Niet opgegeven" },
+    { id: "JS6M&t=388s", naam: "Met de bus (#NT2, 1.1, A1 - 1.2, A2)", thema: "Niet opgegeven" },
+    { id: "fBv7ezaZ5NA", naam: "Medicatie gebruiken (#NT2, #learndutch, 1.1, A1 - 1.2, A2)", thema: "Niet opgegeven" },
+    { id: "cW73OK7KWCo", naam: "Klachten en medicatie (#NT2, 1.1, A1 - 1.2, A2)", thema: "Niet opgegeven" },
+    { id: "6bO3VqcZ8N8", naam: "Het feest van Sinterklaas (#NT2, 1.1/A1, 1.2/A2)", thema: "Niet opgegeven" },
+    { id: "kaimlmdcyPA", naam: "Problemen en vragen in de klas", thema: "Niet opgegeven" },
+    { id: "vUsnLKCkqOU", naam: "Familietijd. Wat doen ze? (presens) (NT2 Breakthrough, #NT2, A1, 1.1)", thema: "Niet opgegeven" },
+    { id: "rdcIP4WoHoM", naam: "Familietijd - Wat hebben ze gedaan? (perfectum) (#NT2, 1.2, A2)", thema: "Niet opgegeven" },
+    { id: "mv8F0Dslc9A", naam: "De dag van Tijs (NT2 Breakthrough, #NT2, A1, 1.1)", thema: "Niet opgegeven" },
+    { id: "ltaw8gNH3Jk", naam: "Kamers in huis (#NT2, 1.2, A2)", thema: "Niet opgegeven" },
+    { id: "EcGDiOL-r7U", naam: "Winteruur (#NT2, 1.1, A1 - 1.2, A2)", thema: "Niet opgegeven" },
+    { id: "AcTsKMs6KGs", naam: "Halloween (NT2 Waystage, #NT2, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "MI1Y&t=209s", naam: "Schoolspullen. Hoeveel kost het? (NT2 Breakthrough, #NT2, A1, 1.1)", thema: "Niet opgegeven" },
+    { id: "0i1QZAvI_so", naam: "In de klerenwinkel. Hoeveel kost het? (NT2 Breakthrough, #NT2, A1, 1.1)", thema: "Niet opgegeven" },
+    { id: "-q8IdWgRmKg", naam: "Werk je graag in de tuin? (NT2 Waystage, #NT2, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "saepnKFPJ80", naam: "Wat zijn ze aan het doen? (NT2 Waystage, #NT2, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "YSXIuM--qQs", naam: "Mijn gezin (NT2 Breakthrough, #NT2, A1, 1.1)", thema: "Niet opgegeven" },
+    { id: "8oWzHJT9I8I", naam: "Personen /persoonlijke voornaamwoorden / het werkwoord &#39;zijn&#39; (NT2 Breakthrough, #NT2, A1, 1.1)", thema: "Niet opgegeven" },
+    { id: "TShxS7vHQto", naam: "Personen /persoonlijke voornaamwoorden (NT2 Breakthrough, #NT2, A1, 1.1)", thema: "Niet opgegeven" },
+    { id: "guE8XA4W0qE", naam: "Waar ben je naartoe geweest? (NT2 Waystage, #NT2, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "lfDdNngrsPo", naam: "Wat ga jij doen in het weekend? (NT2 Waystage, #NT2, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "52tIFau3zwg", naam: "De dag van Sien (b) (NT2 Breakthrough, #NT2, A1, 1.1)", thema: "Niet opgegeven" },
+    { id: "ERqsCItgx6U", naam: "De dag van Sien (NT2 Breakthrough, #NT2, A1, 1.1)", thema: "Niet opgegeven" },
+    { id: "fh1pyREjAZA", naam: "Een opdracht maken (NT2 Breakthrough, #NT2, A1, 1.1)", thema: "Niet opgegeven" },
+    { id: "R9htMs_vT3Y", naam: "Het rek van de metaalbewerker (NT2 Waystage, #NT2, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "FfmCbq95PZg", naam: "Het rek van de schilder (NT2 Waystage, #NT2, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "6ANwGE7WXYM", naam: "Het rek van de metselaar (NT2 Waystage, #NT2, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "up89oJbCgn8", naam: "Het rek van de stukadoor (NT2 Waystage, #NT2, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "prWGkHfysOs", naam: "Logeren bij de grootouders (Beeldverhaal)", thema: "Niet opgegeven" },
+    { id: "TggQEFPpSU4", naam: "Mijn opa, de garagist (Beeldverhaal)", thema: "Niet opgegeven" },
+    { id: "9mlG2N__2bs", naam: "Beroepen - Wat doet hij/zij? (NT2 Breakthrough #NT2, A1, 1.1)", thema: "Niet opgegeven" },
+    { id: "AOaajVvLfTg", naam: "Wat heb je nodig in de klas?", thema: "School" },
+    { id: "F3xJfXwn7V0", naam: "Wie werkt waar? (beroepen) (NT2 Breakthrough, #NT2, A1, 1.1)", thema: "Werk" },
+    { id: "ruIo3CeykwQ", naam: "Beroepen en materiaal (NT2 Waystage, #NT2, A2, 1.2)", thema: "Werk" },
+    { id: "iDmH8&t=71s", naam: "Beroepen uit de bouw (NT2 Waystage, #NT2, A2, 1.2)", thema: "Werk" },
+    { id: "FZy28&t=17s", naam: "Problemen in huis (2) (NT2 Waystage, #NT2, A2, 1.2)", thema: "Wonen" },
+    { id: "bmDXwRBAHG4", naam: "Problemen in huis (1) (NT2 Breakthrough, #NT2, A1, 1.1)", thema: "Wonen" },
+    { id: "q8Yu5XqaKic", naam: "Apparaten en activiteiten in huis (NT2 Waystage, #NT2, A2, 1.2)", thema: "Wonen" },
+    { id: "w7lSpZHPamU", naam: "Vragen: Leeft u gezond? (NT2 Waystage, #NT2, A2, 1.2)", thema: "Gezondheid" },
+    { id: "BbCmtxcD5S4", naam: "Apparaten en activiteiten in de keuken (NT2 Waystage, #NT2, A2, 1.2)", thema: "Wonen" },
+    { id: "3Oep0Yc5aaw", naam: "In de badkamer (NT2 Waystage, #NT2, A2, 1.2)", thema: "Wonen" },
+    { id: "WfIYq5JPS8Y", naam: "Een weekje vakantie (NT2 Breakthrough / Waystage, #NT2, A1, 1.1, A2, 1.2)", thema: "Vrije tijd" },
+    { id: "9U2PaIqqvF4", naam: "Wat doe je graag (NT2 Breakthrough, #NT2, BT, A1, 1.1)", thema: "Beleving" },
+    { id: "QXiwtHluqqw", naam: "Wat heb je nodig? (verven) (NT2 Waystage, #NT2, A2, 1.2)", thema: "Werk" },
+    { id: "dAvhKs9Q8d8", naam: "Kan je me helpen? (NT2 Waystage , #NT2, A2, 1.2)", thema: "Niet opgegeven" },
+    { id: "Yb1dOnnWvAY", naam: "Als ..., dan ... Advies geven (NT2 Waystage, #NT2, 1.2, A2)", thema: "Niet opgegeven" },
+    { id: "VB0wLv78VsA", naam: "Hoe gaat het? (NT2 Breakthrough, #NT2, A1, 1.1, A2, 1.2)", thema: "Beleving" },
+    { id: "OBwOXaIdVSE", naam: "Hoe ziet de man eruit? (NT2 Breakthrough, 1.1, A1)", thema: "Niet opgegeven" },
+    { id: "LXdKw8__sas", naam: "Hoe zag de dief eruit? (NT2 Waystage, #NT2, 1.2, A2)", thema: "Niet opgegeven" },
+    { id: "xefCLdCoqBE", naam: "Wat ben je kwijt? - Verloren voorwerpen (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "Niet opgegeven" },
+    { id: "r0RbbkMcJpg", naam: "Ik ben bestolen. (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "Problemen" },
+    { id: "px-yaGgikQw", naam: "Afspraken in de les (NT2 Breaktrough/Waystage , #NT2, 1.1, A1, 1.2, A2)", thema: "School" },
+    { id: "AA8vc-FoWhA", naam: "Emoties - ik voel me (NT2 Waystage, #NT2, 1.2, A2)", thema: "Beleving" },
+    { id: "z_QKOEzydY8", naam: "Vragen in de klas (NT2 Breakthrough/Waystage, #NT2, 1.1, A1, 1.2, A2)", thema: "School" },
+    { id: "xKFQLN-3-SQ", naam: "In de woonkamer (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "Wonen" },
+    { id: "sVt0LC5Z36Q", naam: "Wat heb je gekocht? (meubels) (NT2 Waystage, #NT2, 1.2, A2)", thema: "Consument" },
+    { id: "S3iT_6WZq-U", naam: "Vragen stellen (meubels) (NT2 Waystage , #NT2, 1.2, A2)", thema: "Niet opgegeven" },
+    { id: "4xc6FQ-rZhU", naam: "Is de zetel nog te koop? (NT2 Waystage, #NT2, 1.2, A2)", thema: "Consument" },
+    { id: "vz5BR7ODUx0", naam: "Is de tafel nog te koop? (NT2 Waystage, #NT2 1.2, A2)", thema: "Consument" },
+    { id: "sV-RWNknQrY", naam: "Is het bed nog te koop? (NT2 Waystage , #NT2, 1.2, A2)", thema: "Consument" },
+    { id: "DwltpgyaPLo", naam: "Waarvoor gebruik je ... ? (NT2 Waystage, #NT2, 1.2, A2)", thema: "Niet opgegeven" },
+    { id: "FcTEPba-rxc", naam: "Om te + infintief (NT2 Waystage, #NT2, 1.2, A2)", thema: "Niet opgegeven" },
+    { id: "fJly1v81hO8", naam: "Ina en Sebas (beeldverhaal) - (#NT2 Breakthrough / Waystage)", thema: "Niet opgegeven" },
+    { id: "027GU7gJYD8", naam: "Olya en Irina (Beeldverhaal) - #NT2 Breakthrough/Waystage", thema: "Niet opgegeven" },
+    { id: "rJ2j2k&t=6s", naam: "Wil je me helpen? (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "Niet opgegeven" },
+    { id: "9jZwDfPKvzQ", naam: "Waar is ... ? (voorzetsels) (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "Niet opgegeven" },
+    { id: "0KHjxCHLNM4", naam: "Wat heb je gedaan? (Perfectum) (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "Niet opgegeven" },
+    { id: "31sVLBaHlEU", naam: "Waarom kom je niet naar school? (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "School" },
+    { id: "lz98&t=172s", naam: "Wat wil je drinken? (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "Eten en drinken" },
+    { id: "ikz4&t=145s", naam: "Kledij (NT2 Breakthrough, #NT2, 1.2, A2 )", thema: "Kleding" },
+    { id: "Xx2OQQ&t=1s", naam: "Advies geven bij ongezonde voeding (NT2 Waystage, #NT2, 1.2, A2)", thema: "Gezondheid" },
+    { id: "8Bm-fA&t=3s", naam: "Bijvoeglijke naamwoorden (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "Niet opgegeven" },
+    { id: "U71zqQ&t=1s", naam: "Wat drink je graag? (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "Eten en drinken" },
+    { id: "clve0&t=41s", naam: "Eet je graag fruit? (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "Eten en drinken" },
+    { id: "sDpTQvkZgE0", naam: "Eet je graag groenten? (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "Eten en drinken" },
+    { id: "IT2iwjZhZuI", naam: "Hoe is het weer? (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "Weer" },
+    { id: "iLrhCTRYn3I", naam: "Welke sport doe jij? (NT2 Breakthrough, #NT2, A1, 1.1)", thema: "Vrije tijd" },
+    { id: "knpUke6PG64", naam: "Ik wens je ... (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "Niet opgegeven" },
+    { id: "hXUgeC15QNo", naam: "Hoe voel je je? (ziekte) (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "Beleving" },
+    { id: "gYvT0&t=35s", naam: "Ga je mee? (afspreken) (NT2 Waystage, #NT2, 1.2, A2)", thema: "Uitnodiging" },
+    { id: "GHMAZDhsJq0", naam: "Hoe woon jij? (NT2 Waystage, #NT2, 1.2, A2)", thema: "Wonen" },
+    { id: "P4IoIeOgfQQ", naam: "Wat is je hobby? (1.2) (NT2 Waystage, #NT2, 1.2, A2)", thema: "Vrije tijd" },
+    { id: "XeOWAGl2ReE", naam: "Wat hebben ze gisteren gedaan? (Perfectum) (NT2 Waystage, #NT2, 1.2, A2)", thema: "Niet opgegeven" },
+    { id: "MZbGffA2ZYc", naam: "Wat kan hij / zij goed? (NT2 Waystage, #NT2, 1.2, A2)", thema: "Niet opgegeven" },
+    { id: "MHSKdSB2bsY", naam: "Wonen - Ik verhuis! (NT2 Waystage, #NT2, 1.2, A2)", thema: "Wonen" },
+    { id: "EmMpVvHZDig", naam: "Scheidbare werkwoorden (NT2 Waystage, #NT2, 1.2, A2)", thema: "Niet opgegeven" },
+    { id: "6ZYs4BAH0w0", naam: "Instructies geven bij een verhuis (woonkamer) (NT2 Waystage, #NT2, 1.2, A2)", thema: "Instructies" },
+    { id: "a0yAlxYd5_g", naam: "Instructies geven bij een verhuis (slaapkamer) (NT2 Waystage, #NT2, 1.2, A2)", thema: "Instructies" },
+    { id: "PQvs0oHWEb4", naam: "Klachten en problemen (NT2 Waystage, #NT2, 1.2, A2)", thema: "Problemen" },
+    { id: "cB_az4H7730", naam: "De kleuren (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "Niet opgegeven" },
+    { id: "gtXpmUWWIh8", naam: "Bestellen in het restaurant (NT2 Waystage, #NT2, 1.2, A2)", thema: "Vrije tijd" },
+    { id: "DpxIFHTfbU4", naam: "De weg vragen (NT2 Waystage, #NT2, 1.2, A2)", thema: "De weg" },
+    { id: "JV_7iA3vvb0", naam: "Ik eet graag ongezond! (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "Eten en drinken" },
+    { id: "1p0m7VY2NlY", naam: "Zita en Anna (NT2 Breakthrough/Waystage, #NT2, 1.1, A1, 1.2, A2)", thema: "Niet opgegeven" }
+        ];
+        let actiefThema = '';
+        function init() {
+            maakKnoppen();
+        }
+        function filterThema() {
+            actiefThema = document.getElementById('thema-filter').value;
+            maakKnoppen();
+        }
+        function maakKnoppen() {
+            const lijst = document.getElementById('knoppen-lijst');
+            lijst.innerHTML = '';
+            const gefilterd = actiefThema ? videos.filter(v => v.thema === actiefThema) : videos;
+            document.getElementById('aantal-label').textContent = gefilterd.length + " video's";
+            gefilterd.forEach(video => {
+                const knop = document.createElement('button');
+                knop.className = 'video-knop';
+                knop.innerHTML = `<span class="badge thema-badge">${video.thema}</span><span>${video.naam}</span>`;
+                knop.addEventListener('click', () => speelAf(video, knop));
+                lijst.appendChild(knop);
+            });
+        }
+        
+        function speelAf(video, knop) {
+            document.getElementById('welkom').style.display = 'none';
+            document.getElementById('video-container').style.display = 'block';
+            const src = `https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&iv_load_policy=3&loop=0&modestbranding=1&rel=0`;
+            document.getElementById('youtube-iframe').src = src;
+            document.getElementById('video-title').textContent = video.naam;
+            document.querySelectorAll('.video-knop').forEach(b => b.classList.remove('actief'));
+            if (knop) knop.classList.add('actief');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        
+        const params = new URLSearchParams(window.location.search);
+        const directId = params.get('v');
+        if (directId) {
+            document.getElementById('hoofd-header').style.display = 'none';
+            document.getElementById('welkom').style.display = 'none';
+            document.getElementById('nav-sectie').style.display = 'none';
+            document.getElementById('video-container').style.display = 'block';
+            const video = videos.find(v => v.id === directId);
+            const src = `https://www.youtube-nocookie.com/embed/${directId}?autoplay=1&iv_load_policy=3&loop=0&modestbranding=1&rel=0`;
+            document.getElementById('youtube-iframe').src = src;
+            document.getElementById('video-title').textContent = video ? video.naam : '';
+        } else {
+            document.getElementById('nav-sectie').style.display = 'block';
+            init();
+        }
+
+    </script>
+</body>
+</html>
