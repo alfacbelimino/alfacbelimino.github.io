@@ -13,8 +13,10 @@
         #video-title-balk { display: flex; align-items: center; justify-content: space-between; background: #16213e; padding: 10px 14px; border-bottom: 1px solid #0f3460; gap: 10px; }
         #video-title { font-size: 0.9rem; flex: 1; }
         #deel-knop { flex-shrink: 0; background: #e94560; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-family: Georgia, serif; font-size: 0.8rem; cursor: pointer; }
-        #video-wrapper { position: relative; width: auto; max-height: 0.8vh; padding-bottom: 56.25%; }
+        #video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; }
         #video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        #fullscreen-knop { display: none; width: 100%; padding: 14px; background: #0f3460; border: none; color: #f0f0f0; font-family: Georgia, serif; font-size: 1rem; cursor: pointer; border-top: 2px solid #e94560; letter-spacing: 0.05em; }
+        #fullscreen-knop:active { background: #e94560; }
 
         #welkom { padding: 28px 16px; text-align: center; color: #a0a0b0; }
         #welkom .icoon { font-size: 2.5rem; margin-bottom: 12px; }
@@ -50,6 +52,7 @@
             <button id="deel-knop" onclick="deelVideo()">🔗 Deel</button>
         </div>
         <div id="video-wrapper"><iframe id="youtube-iframe" src="" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+        <button id="fullscreen-knop" onclick="zetVolledigScherm()">⛶ Volledig scherm</button>
     </div>
     <div id="nav-sectie">
         <div id="thema-tabs"></div>
@@ -261,6 +264,13 @@
             document.querySelectorAll('.video-knop').forEach(b => b.classList.remove('actief'));
             if (knop) knop.classList.add('actief');
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('fullscreen-knop').style.display = 'block';
+        }
+        function zetVolledigScherm() {
+            const el = document.getElementById('video-wrapper');
+            if (el.requestFullscreen) el.requestFullscreen();
+            else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+            else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
         }
         function deelVideo() {
             const iframe = document.getElementById('youtube-iframe');
