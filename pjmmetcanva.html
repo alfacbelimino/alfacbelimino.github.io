@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>PJM Oefenvideo's</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Georgia, serif; background: #1a1a2e; color: #f0f0f0; min-height: 100vh; display: flex; flex-direction: column; }
+
+        #video-container { width: 100%; background: #000; display: none; }
+        #video-title-balk { display: flex; align-items: center; justify-content: space-between; background: #16213e; padding: 10px 14px; border-bottom: 1px solid #0f3460; gap: 10px; }
+        #video-title { font-size: 0.9rem; flex: 1; }
+        #deel-knop { flex-shrink: 0; background: #e94560; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-family: Georgia, serif; font-size: 0.8rem; cursor: pointer; }
+        #video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; }
+        #video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        #fullscreen-knop { display: none; width: 100%; padding: 14px; background: #0f3460; border: none; color: #f0f0f0; font-family: Georgia, serif; font-size: 1rem; cursor: pointer; border-top: 2px solid #e94560; letter-spacing: 0.05em; }
+        #fullscreen-knop:active { background: #e94560; }
+
+        #welkom { padding: 28px 16px; text-align: center; color: #a0a0b0; }
+        #welkom .icoon { font-size: 2.5rem; margin-bottom: 12px; }
+        #welkom p { font-size: 0.95rem; line-height: 1.6; }
+
+        #thema-tabs { display: flex; overflow-x: auto; background: #16213e; border-bottom: 2px solid #0f3460; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        #thema-tabs::-webkit-scrollbar { display: none; }
+        .thema-tab { flex-shrink: 0; padding: 10px 14px; background: none; border: none; color: #a0a0b0; font-family: Georgia, serif; font-size: 0.82rem; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: color 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; }
+        .thema-tab.actief { color: #f0f0f0; border-bottom-color: #e94560; }
+
+        #knoppen-sectie { padding: 14px; flex: 1; }
+        #aantal-label { font-size: 0.8rem; color: #a0a0b0; margin-bottom: 10px; }
+        #filter-balk { padding: 12px 14px; background: #16213e; border-bottom: 2px solid #0f3460; }
+        #filter-balk select { width: 100%; padding: 10px 12px; background: #0f3460; color: #f0f0f0; border: 2px solid #e94560; border-radius: 8px; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; }
+
+        .video-knop { display: flex; align-items: center; width: 100%; padding: 14px 16px; margin-bottom: 10px; background: #16213e; border: 2px solid #0f3460; border-radius: 10px; color: #f0f0f0; font-size: 0.95rem; font-family: Georgia, serif; text-align: left; cursor: pointer; gap: 12px; transition: background 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; line-height: 1.4; }
+        .video-knop:active { transform: scale(0.98); }
+        .video-knop.actief { background: #0f3460; border-color: #e94560; }
+        .niveau-badge { flex-shrink: 0; background: #e94560; color: #fff; border-radius: 6px; padding: 2px 7px; font-size: 0.8rem; }
+        .video-knop.actief .niveau-badge { background: #fff; color: #e94560; }
+        .thema-badge { flex-shrink: 0; background: #0f3460; color: #a0c4ff; border-radius: 6px; padding: 2px 7px; font-size: 0.75rem; white-space: nowrap; }
+        .video-knop.actief .thema-badge { background: #e94560; color: #fff; }
+        .nummer { flex-shrink: 0; background: #e94560; color: #fff; border-radius: 50%; width: 28px; height: 28px; line-height: 28px; text-align: center; font-size: 0.8rem; }
+        .video-knop.actief .nummer { background: #fff; color: #e94560; }
+
+        #hoofd-tabs { display: flex; background: #0d1b2e; border-bottom: 3px solid #e94560; }
+        .hoofd-tab { flex: 1; padding: 12px; background: none; border: none; color: #a0a0b0; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -3px; transition: color 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; }
+        .hoofd-tab.actief { color: #f0f0f0; border-bottom-color: #e94560; }
+        #canva-sectie { display: none; flex: 1; flex-direction: column; }
+        #canva-knoppen { padding: 14px; flex: 1; }
+        .canva-knop { display: flex; align-items: center; width: 100%; padding: 14px 16px; margin-bottom: 10px; background: #16213e; border: 2px solid #0f3460; border-radius: 10px; color: #f0f0f0; font-size: 0.9rem; font-family: Georgia, serif; text-align: left; cursor: pointer; gap: 12px; transition: background 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; line-height: 1.4; text-decoration: none; }
+        .canva-knop:active { transform: scale(0.98); background: #0f3460; border-color: #e94560; }
+        .deel-knop-canva { flex-shrink: 0; background: #e94560; color: #fff; border: none; border-radius: 6px; padding: 6px 10px; font-family: Georgia, serif; font-size: 0.75rem; cursor: pointer; }
+        </style>
+</head>
+<body>
+    
+    <div id="hoofd-tabs">
+        <button class="hoofd-tab actief" id="tab-video" onclick="toonSectie('video')">▶ Video's</button>
+        <button class="hoofd-tab" id="tab-canva" onclick="toonSectie('canva')">📋 Canva</button>
+    </div>
+    <div id="video-sectie" style="display:flex; flex-direction:column; flex:1;">
+    <div id="welkom"><div class="icoon">▶</div><p>Kies een video.</p></div>
+    
+    <div id="video-container">
+        <div id="video-title-balk">
+            <span id="video-title"></span>
+            <button id="deel-knop" onclick="deelVideo()">🔗 Deel</button>
+        </div>
+        <div id="video-wrapper"><iframe id="youtube-iframe" src="" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+        <button id="fullscreen-knop" onclick="zetVolledigScherm()">⛶ Volledig scherm</button>
+    </div>
+    <div id="nav-sectie">
+        <div id="thema-tabs"></div>
+        <div id="knoppen-sectie"></div>
+    </div>
+    <script>
+        const videos = [
+    { id: "oEDsDnXPORc", naam: "1 .1 - Zich voorstellen*", thema: "Thema 01 - Kennismaken" },
+    { id: "04TQxMHEKf0", naam: "1 .1 - Zich voorstellen**", thema: "Thema 01 - Kennismaken" },
+    { id: "_s2U4XOJUFU", naam: "1 .1 - Zich voorstellen***", thema: "Thema 01 - Kennismaken" },
+    { id: "7UQzrh4gJ3k", naam: "1 .2 - Bedanken en afscheid nemen*", thema: "Thema 01 - Kennismaken" },
+    { id: "L5-eJ3rAWaQ", naam: "1 .2 - Bedanken en afscheid nemen**", thema: "Thema 01 - Kennismaken" },
+    { id: "TEF9eN5RP_w", naam: "1 .2 - Bedanken en afscheid nemen***", thema: "Thema 01 - Kennismaken" },
+    { id: "3IlQZ67ir24", naam: "1 .3 - Groeten en vragen hoe het gaat*", thema: "Thema 01 - Kennismaken" },
+    { id: "_I_DFW-lYb4", naam: "1 .3 - Groeten en vragen hoe het gaat**", thema: "Thema 01 - Kennismaken" },
+    { id: "CbPuI1JqCOI", naam: "1 .3 - Groeten en vragen hoe het gaat***", thema: "Thema 01 - Kennismaken" },
+    { id: "Ufg5EyHc6Wo", naam: "1 .4 - Vertellen over het gezin*", thema: "Thema 01 - Kennismaken" },
+    { id: "MVT5coFwJCQ", naam: "1 .4 - Vertellen over het gezin**", thema: "Thema 01 - Kennismaken" },
+    { id: "6kG9nbvJAiQ", naam: "1 .4 - Vertellen over het gezin***", thema: "Thema 01 - Kennismaken" },
+    { id: "9gpN-q_xFDs", naam: "1 .5 - Vertellen over het verblijf in België*", thema: "Thema 01 - Kennismaken" },
+    { id: "u67gLDD4YlI", naam: "1 .5 - Vertellen over het verblijf in België**", thema: "Thema 01 - Kennismaken" },
+    { id: "doZLjRIHLFY", naam: "1 .5 - Vertellen over het verblijf in België***", thema: "Thema 01 - Kennismaken" },
+    { id: "8Ac7-uHzCFs", naam: "1 .6 - De eigen gegevens zeggen*", thema: "Thema 01 - Kennismaken" },
+    { id: "ARL0U-IdKMs", naam: "1 .6 - De eigen gegevens zeggen**", thema: "Thema 01 - Kennismaken" },
+    { id: "U5J9OsJkuL4", naam: "1 .6 - De eigen gegevens zeggen***", thema: "Thema 01 - Kennismaken" },
+    { id: "jukKVxB7LbA", naam: "2 .1 - Regels in de klas*", thema: "Thema 02 - School" },
+    { id: "9hgD-CjWGUI", naam: "2 .1 - Regels in de klas**", thema: "Thema 02 - School" },
+    { id: "-Quj5nKXwLU", naam: "2 .1 - Regels in de klas***", thema: "Thema 02 - School" },
+    { id: "asPJyh84qg4", naam: "2 .2 - Huiswerk*", thema: "Thema 02 - School" },
+    { id: "Eiv7rUWeoUM", naam: "2 .2 - Huiswerk**", thema: "Thema 02 - School" },
+    { id: "ejUmhBykeOQ", naam: "2 .2 - Huiswerk***", thema: "Thema 02 - School" },
+    { id: "QTjLaCQ0-SM", naam: "2 .3 - Dingen vragen en geven*", thema: "Thema 02 - School" },
+    { id: "LxP_obZ7hBg", naam: "2 .3 - Dingen vragen en geven**", thema: "Thema 02 - School" },
+    { id: "MKZ4ZklceJ4", naam: "2 .3 - Dingen vragen en geven***", thema: "Thema 02 - School" },
+    { id: "leUF1s19H2k", naam: "2 .4 - Om hulp en verduidelijking vragen*", thema: "Thema 02 - School" },
+    { id: "EoLcMqYa-xk", naam: "2 .4 - Om hulp en verduidelijking vragen**", thema: "Thema 02 - School" },
+    { id: "f0d_O4zJVlY", naam: "2 .4 - Om hulp en verduidelijking vragen***", thema: "Thema 02 - School" },
+    { id: "vnyJh5Vom-k", naam: "2 .5 - Vertellen wat je op school doet*", thema: "Thema 02 - School" },
+    { id: "OxUSSXlEbuc", naam: "2 .5 - Vertellen wat je op school doet**", thema: "Thema 02 - School" },
+    { id: "8cwhFUGJYhA", naam: "2 .5 - Vertellen wat je op school doet***", thema: "Thema 02 - School" },
+    { id: "qCVCKowj6kg", naam: "2 .6 - Zich ziek melden*", thema: "Thema 02 - School" },
+    { id: "pqpYOZwaWaE", naam: "2 .6 - Zich ziek melden**", thema: "Thema 02 - School" },
+    { id: "5-aZLZIsoPo", naam: "2 .6 - Zich ziek melden***", thema: "Thema 02 - School" },
+    { id: "5-aZLZIsoPo", naam: "2 .7 - Klokkijken (1)*", thema: "Thema 02 - School" },
+    { id: "lnI_6EGASc0", naam: "2 .7 - Klokkijken (1)**", thema: "Thema 02 - School" },
+    { id: "dY_YyNa4xlk", naam: "3 .1 - Eten en drinken aanbieden*", thema: "Thema 03 - Eten en drinken" },
+    { id: "TWzLo-Gmijc", naam: "3 .1 - Eten en drinken aanbieden**", thema: "Thema 03 - Eten en drinken" },
+    { id: "pkT6w009AEo", naam: "3 .1 - Eten en drinken aanbieden***", thema: "Thema 03 - Eten en drinken" },
+    { id: "WHptnAC4Ueo", naam: "3 .2 - Iets bestellen in de kantine*", thema: "Thema 03 - Eten en drinken" },
+    { id: "2oUkxPWcR2c", naam: "3 .2 - Iets bestellen in de kantine**", thema: "Thema 03 - Eten en drinken" },
+    { id: "_aga_B4XEXA", naam: "3 .2 - Iets bestellen in de kantine***", thema: "Thema 03 - Eten en drinken" },
+    { id: "ZqRGtULyu7M", naam: "3 .3 - Toezeggen iets mee te nemen*", thema: "Thema 03 - Eten en drinken" },
+    { id: "idIHBPpt0JU", naam: "3 .3 - Toezeggen iets mee te nemen**", thema: "Thema 03 - Eten en drinken" },
+    { id: "hJKywXQk2UM", naam: "3 .3 - Toezeggen iets mee te nemen***", thema: "Thema 03 - Eten en drinken" },
+    { id: "-RAYOcD9szc", naam: "3 .4 - Iets vragen in de supermarkt*", thema: "Thema 03 - Eten en drinken" },
+    { id: "hYg5Nt6ZETg", naam: "3 .4 - Iets vragen in de supermarkt**", thema: "Thema 03 - Eten en drinken" },
+    { id: "nxMsYN5pJjI", naam: "3 .4 - Iets vragen in de supermarkt***", thema: "Thema 03 - Eten en drinken" },
+    { id: "L5dO164sUss", naam: "3 .5 - Zeggen wat je (niet) lekker vindt*", thema: "Thema 03 - Eten en drinken" },
+    { id: "E6O2HOBSzE8", naam: "3 .5 - Zeggen wat je (niet) lekker vindt**", thema: "Thema 03 - Eten en drinken" },
+    { id: "stGAaX0Di0Q", naam: "3 .5 - Zeggen wat je (niet) lekker vindt***", thema: "Thema 03 - Eten en drinken" },
+    { id: "BDmA-qmGRSo", naam: "3 .6 - Afrekenen in de winkel*", thema: "Thema 03 - Eten en drinken" },
+    { id: "LYufs579iwg", naam: "3 .6 - Afrekenen in de winkel**", thema: "Thema 03 - Eten en drinken" },
+    { id: "1G4eIcSwCqY", naam: "3 .6 - Afrekenen in de winkel***", thema: "Thema 03 - Eten en drinken" },
+    { id: "BE0_EUsKhto", naam: "3 .7 - Vragen hoeveel iets kost*", thema: "Thema 03 - Eten en drinken" },
+    { id: "Sd8tcU4MIOQ", naam: "3 .7 - Vragen hoeveel iets kost**", thema: "Thema 03 - Eten en drinken" },
+    { id: "uyBxNounTT4", naam: "3 .7 - Vragen hoeveel iets kost***", thema: "Thema 03 - Eten en drinken" },
+    { id: "ivlKrfD-a1w", naam: "4 .1 - Vertellen waar je last van hebt*", thema: "Thema 04 - Gezondheid" },
+    { id: "osGYIM5kjU4", naam: "4 .1 - Vertellen waar je last van hebt**", thema: "Thema 04 - Gezondheid" },
+    { id: "Hl201uSoFg4", naam: "4 .1 - Vertellen waar je last van hebt***", thema: "Thema 04 - Gezondheid" },
+    { id: "AC2yozYO7p0", naam: "4 .2 - Klokkijken (2)*", thema: "Thema 04 - Gezondheid" },
+    { id: "tg996DughLQ", naam: "4 .3 - Een afspraak maken*", thema: "Thema 04 - Gezondheid" },
+    { id: "xg43k3NP_vw", naam: "4 .3 - Een afspraak maken**", thema: "Thema 04 - Gezondheid" },
+    { id: "fJ6KwbMT8qw", naam: "4 .3 - Een afspraak maken***", thema: "Thema 04 - Gezondheid" },
+    { id: "fquGQtRZ7Yk", naam: "4 .4 - Bij de huisarts*", thema: "Thema 04 - Gezondheid" },
+    { id: "6b-wfTGwI3k", naam: "4 .4 - Bij de huisarts**", thema: "Thema 04 - Gezondheid" },
+    { id: "4Z6ui-5jyA0", naam: "4 .4 - Bij de huisarts***", thema: "Thema 04 - Gezondheid" },
+    { id: "EstVvLhsjDA", naam: "4 .5 - Bij de apotheek*", thema: "Thema 04 - Gezondheid" },
+    { id: "P4Gc96ttBic", naam: "4 .5 - Bij de apotheek**", thema: "Thema 04 - Gezondheid" },
+    { id: "3lcs1mRputw", naam: "4 .5 - Bij de apotheek***", thema: "Thema 04 - Gezondheid" },
+    { id: "HsDZ3oQmOcY", naam: "4 .6 - Bij de tandarts*", thema: "Thema 04 - Gezondheid" },
+    { id: "_YEpvlPZm50", naam: "4 .6 - Bij de tandarts**", thema: "Thema 04 - Gezondheid" },
+    { id: "-3cQFz32SGc", naam: "4 .6 - Bij de tandarts***", thema: "Thema 04 - Gezondheid" },
+    { id: "7PmwfC9WsWM", naam: "4 .7 - Naar het ziekenhuis**", thema: "Thema 04 - Gezondheid" },
+    { id: "658nqKUnoME", naam: "4 .7 - Naar het ziekenhuis***", thema: "Thema 04 - Gezondheid" },
+    { id: "R-Mdges7j3k", naam: "5 .1 - Een gesprek voeren in een winkel*", thema: "Thema 05 - Kleding" },
+    { id: "Nanq_jFP0Lw", naam: "5 .1 - Een gesprek voeren in een winkel**", thema: "Thema 05 - Kleding" },
+    { id: "gMZEgI_0pFs", naam: "5 .1 - Een gesprek voeren in een winkel***", thema: "Thema 05 - Kleding" },
+    { id: "Lg_ST5NT5k0", naam: "5 .2 - Kleren passen*", thema: "Thema 05 - Kleding" },
+    { id: "IsgZ4UdjgHw", naam: "5 .2 - Kleren passen**", thema: "Thema 05 - Kleding" },
+    { id: "hLAzuZIXXIE", naam: "5 .2 - Kleren passen***", thema: "Thema 05 - Kleding" },
+    { id: "Lg_ST5NT5k0", naam: "5 .3 - Iemands uiterlijk beschrijven*", thema: "Thema 05 - Kleding" },
+    { id: "IsgZ4UdjgHw", naam: "5 .3 - Iemands uiterlijk beschrijven**", thema: "Thema 05 - Kleding" },
+    { id: "hLAzuZIXXIE", naam: "5 .3 - Iemands uiterlijk beschrijven***", thema: "Thema 05 - Kleding" },
+    { id: "dWCz2H950aw", naam: "5 .4 - Iets ruilen of terugbrengen**", thema: "Thema 05 - Kleding" },
+    { id: "zxom02OWc6o", naam: "5 .4 - Iets ruilen of terugbrengen***", thema: "Thema 05 - Kleding" },
+    { id: "U2VjapkKpU4", naam: "6 .1 - Vertellen waar je woont*", thema: "Thema 06 - Wonen" },
+    { id: "x7tAvRT9XqQ", naam: "6 .1 - Vertellen waar je woont**", thema: "Thema 06 - Wonen" },
+    { id: "aF6nrFUdtDQ", naam: "6 .1 - Vertellen waar je woont***", thema: "Thema 06 - Wonen" },
+    { id: "tOXC93g8qbc", naam: "6 .2 - Je huis beschrijven (1)*", thema: "Thema 06 - Wonen" },
+    { id: "T5Z7IGwaUiw", naam: "6 .2 - Je huis beschrijven (1)**", thema: "Thema 06 - Wonen" },
+    { id: "TSa1KUPSWPQ", naam: "6 .2 - Je huis beschrijven (1)***", thema: "Thema 06 - Wonen" },
+    { id: "_ksytcJbkV8", naam: "6 .3 - Je huis beschrijven (2)*", thema: "Thema 06 - Wonen" },
+    { id: "4Pkz1h_ZXjE", naam: "6 .3 - Je huis beschrijven (2)**", thema: "Thema 06 - Wonen" },
+    { id: "GWTpNceRtoU", naam: "6 .3 - Je huis beschrijven (2)***", thema: "Thema 06 - Wonen" },
+    { id: "uWtIFHF-E3E", naam: "6 .4 - Problemen in huis beschrijven*", thema: "Thema 06 - Wonen" },
+    { id: "6GTg-TszYoA", naam: "6 .4 - Problemen in huis beschrijven**", thema: "Thema 06 - Wonen" },
+    { id: "rWcx7FPBN3k", naam: "6 .4 - Problemen in huis beschrijven***", thema: "Thema 06 - Wonen" },
+    { id: "QnKmUjtYMbI", naam: "6 .5 - Praten over het weer*", thema: "Thema 06 - Wonen" },
+    { id: "srOUHBlKcUo", naam: "6 .5 - Praten over het weer**", thema: "Thema 06 - Wonen" },
+    { id: "JkkaLC4Cdq4", naam: "6 .5 - Praten over het weer***", thema: "Thema 06 - Wonen" },
+    { id: "IQpwKKg5C6k", naam: "7 .1 - Praten over je vrije tijd (o.t.t.)*", thema: "Thema 07 - Vrije tijd" },
+    { id: "eR5AE6NGUZc", naam: "7 .1 - Praten over je vrije tijd (o.t.t.)**", thema: "Thema 07 - Vrije tijd" },
+    { id: "owinZlPArBg", naam: "7 .1 - Praten over je vrije tijd (o.t.t.)***", thema: "Thema 07 - Vrije tijd" },
+    { id: "fsi1brsv1b4", naam: "7 .2 - Praten over je vrije tijd (v.t.t.)*", thema: "Thema 07 - Vrije tijd" },
+    { id: "8Y1CGxJiyew", naam: "7 .2 - Praten over je vrije tijd (v.t.t.)**", thema: "Thema 07 - Vrije tijd" },
+    { id: "7E3jTEJADbE", naam: "7 .2 - Praten over je vrije tijd (v.t.t.)***", thema: "Thema 07 - Vrije tijd" },
+    { id: "CzQYLELHtaM", naam: "7 .3 - Praten over hobby&#39;s*", thema: "Thema 07 - Vrije tijd" },
+    { id: "qxTntiEGi20", naam: "7 .3 - Praten over hobby&#39;s**", thema: "Thema 07 - Vrije tijd" },
+    { id: "vFkylvjLHTA", naam: "7 .3 - Praten over hobby&#39;s***", thema: "Thema 07 - Vrije tijd" },
+    { id: "QDITPxy0nDA", naam: "7 .4 - Samen iets afspreken*", thema: "Thema 07 - Vrije tijd" },
+    { id: "BddMPISHLa8", naam: "7 .4 - Samen iets afspreken**", thema: "Thema 07 - Vrije tijd" },
+    { id: "A_xHfAPV78s", naam: "7 .4 - Samen iets afspreken***", thema: "Thema 07 - Vrije tijd" },
+    { id: "vRE5NByRuq4", naam: "7 .5 - Uitnodiging voor een feest*", thema: "Thema 07 - Vrije tijd" },
+    { id: "WgG63mO452U", naam: "7 .5 - Uitnodiging voor een feest**", thema: "Thema 07 - Vrije tijd" },
+    { id: "ZkY3iZNZPq0", naam: "7 .5 - Uitnodiging voor een feest***", thema: "Thema 07 - Vrije tijd" },
+    { id: "bHq7MGOZChI", naam: "7 .6 - Praten over activiteiten in de buurt*", thema: "Thema 07 - Vrije tijd" },
+    { id: "GFr9TiumIOo", naam: "7 .6 - Praten over activiteiten in de buurt**", thema: "Thema 07 - Vrije tijd" },
+    { id: "zILSMFgKqfg", naam: "7 .6 - Praten over activiteiten in de buurt***", thema: "Thema 07 - Vrije tijd" },
+    { id: "YKqxKA9sQnA", naam: "8 .1 - Praten over reizen*", thema: "Thema 08 - Reizen" },
+    { id: "WKh9es8kVOc", naam: "8 .1 - Praten over reizen**", thema: "Thema 08 - Reizen" },
+    { id: "Pemu4Q4W-oc", naam: "8 .1 - Praten over reizen***", thema: "Thema 08 - Reizen" },
+    { id: "WCC6qCodC_8", naam: "8 .2 - Reizen met het ov*", thema: "Thema 08 - Reizen" },
+    { id: "W9QE510zhwg", naam: "8 .2 - Reizen met het ov**", thema: "Thema 08 - Reizen" },
+    { id: "a411d_TLl3A", naam: "8 .2 - Reizen met het ov***", thema: "Thema 08 - Reizen" },
+    { id: "D5wvwXiLVAM", naam: "8 .3 - De weg vragen*", thema: "Thema 08 - Reizen" },
+    { id: "MuGKt1arUxU", naam: "8 .3 - De weg vragen**", thema: "Thema 08 - Reizen" },
+    { id: "Bsm_zlzO2-g", naam: "8 .3 - De weg vragen***", thema: "Thema 08 - Reizen" },
+    { id: "uUFlO5hvN94", naam: "8 .4 - Een gesprekje bij de bushalte*", thema: "Thema 08 - Reizen" },
+    { id: "r5sIt-xFX8A", naam: "8 .4 - Een gesprekje bij de bushalte**", thema: "Thema 08 - Reizen" },
+    { id: "b1V_cnxGejM", naam: "8 .4 - Een gesprekje bij de bushalte***", thema: "Thema 08 - Reizen" },
+    { id: "3EB6bu9jS20", naam: "9 .1 - Vertellen wat je kunt en leuk vindt*", thema: "Thema 09 - Werk" },
+    { id: "h6ZuOjnPzPM", naam: "9 .1 - Vertellen wat je kunt en leuk vindt**", thema: "Thema 09 - Werk" },
+    { id: "kHxG4F_TBBc", naam: "9 .1 - Vertellen wat je kunt en leuk vindt***", thema: "Thema 09 - Werk" },
+    { id: "qjTKwENYEag", naam: "9 .2 - Werk zoeken en vinden*", thema: "Thema 09 - Werk" },
+    { id: "_i9Aa_cKnvI", naam: "9 .2 - Werk zoeken en vinden**", thema: "Thema 09 - Werk" },
+    { id: "BujhLpdnz6c", naam: "9 .2 - Werk zoeken en vinden***", thema: "Thema 09 - Werk" },
+    { id: "HuacNFztA9U", naam: "9 .3 - Een sollicitatiegesprek voeren*", thema: "Thema 09 - Werk" },
+    { id: "z2av_C_WC_k", naam: "9 .3 - Een sollicitatiegesprek voeren**", thema: "Thema 09 - Werk" },
+    { id: "Zinn9cjQFxs", naam: "9 .3 - Een sollicitatiegesprek voeren***", thema: "Thema 09 - Werk" },
+    { id: "Tq9VlMmOEGM", naam: "9 .4 - Zich voorstellen op het werk*", thema: "Thema 09 - Werk" },
+    { id: "4pleVLhs_hY", naam: "9 .4 - Zich voorstellen op het werk**", thema: "Thema 09 - Werk" },
+    { id: "h6N3_DkqShs", naam: "9 .5 - Om hulp vragen**", thema: "Thema 09 - Werk" },
+    { id: "y8T4A9PDuVU", naam: "9 .5 - Om hulp vragen***", thema: "Thema 09 - Werk" },
+    { id: "Dgm1_moTD-Y", naam: "9 .6 - Zich ziek melden en vrij vragen*", thema: "Thema 09 - Werk" },
+    { id: "2C8K1hs1_CY", naam: "9 .6 - Zich ziek melden en vrij vragen**", thema: "Thema 09 - Werk" },
+    { id: "Sa4LaGetDgQ", naam: "9 .6 - Zich ziek melden en vrij vragen***", thema: "Thema 09 - Werk" },
+    { id: "PhSkZlDGo14", naam: "10 .1 - Praten over familie en kinderen*", thema: "Thema 10 - Kinderen" },
+    { id: "ocYQFzWyzgg", naam: "10 .1 - Praten over familie en kinderen**", thema: "Thema 10 - Kinderen" },
+    { id: "buzQfUdTKBg", naam: "10 .2 - Praten met andere ouders**", thema: "Thema 10 - Kinderen" },
+    { id: "zL0rXblzqEI", naam: "10 .2 - Praten met andere ouders***", thema: "Thema 10 - Kinderen" },
+    { id: "vHUtxTY6ucg", naam: "10 .3 - Helpen op school*", thema: "Thema 10 - Kinderen" },
+    { id: "oyjsEatWRXQ", naam: "10 .3 - Helpen op school**", thema: "Thema 10 - Kinderen" },
+    { id: "-tZTfpybhbo", naam: "10 .3 - Helpen op school***", thema: "Thema 10 - Kinderen" },
+    { id: "67ABJ6-B0jI", naam: "10 .4 - Praten over hoe het met je kind gaat*", thema: "Thema 10 - Kinderen" },
+    { id: "U1EYcwK2MuA", naam: "0 .4 - Praten over hoe het met je kind gaat**", thema: "Thema 10 - Kinderen" },
+    { id: "cAYceO6kHnQ", naam: "0 .4 - Praten over hoe het met je kind gaat***", thema: "Thema 10 - Kinderen" },
+    { id: "jwYCgUVc03o", naam: "0 .5 - Praten over hoe het op school gaat*", thema: "Thema 10 - Kinderen" },
+    { id: "J1j2QPzYATI", naam: "0 .5 - Praten over hoe het op school gaat**", thema: "Thema 10 - Kinderen" },
+    { id: "7dvtUsrOdS4", naam: "0 .5 - Praten over hoe het op school gaat***", thema: "Thema 10 - Kinderen" }
+        ];
+        const themas = [...new Set(videos.map(v => v.thema))];
+        let actiefThema = themas[0];
+        function init() {
+            const tabsEl = document.getElementById('thema-tabs');
+            themas.forEach(t => {
+                const btn = document.createElement('button');
+                btn.className = 'thema-tab' + (t === actiefThema ? ' actief' : '');
+                btn.textContent = t.replace('Thema ', 'T').replace(' - ', ' ');
+                btn.addEventListener('click', () => selecteerThema(t));
+                tabsEl.appendChild(btn);
+            });
+            maakKnoppen();
+        }
+        function selecteerThema(thema) {
+            actiefThema = thema;
+            document.querySelectorAll('.thema-tab').forEach((b, i) => b.classList.toggle('actief', themas[i] === thema));
+            maakKnoppen();
+        }
+        function maakKnoppen() {
+            const lijst = document.getElementById('knoppen-sectie');
+            lijst.innerHTML = '';
+            videos.filter(v => v.thema === actiefThema).forEach(video => {
+                const knop = document.createElement('button');
+                knop.className = 'video-knop';
+                const sterren = video.naam.includes('***') ? '***' : video.naam.includes('**') ? '**' : '*';
+                const basis = video.naam.replace(/\*+/, '').trim();
+                knop.innerHTML = '<span class="niveau-badge">' + sterren + '</span><span>' + basis + '</span>';
+                knop.addEventListener('click', () => speelAf(video, knop));
+                lijst.appendChild(knop);
+            });
+        }
+        
+        function speelAf(video, knop) {
+            document.getElementById('welkom').style.display = 'none';
+            document.getElementById('video-container').style.display = 'block';
+            const src = 'https://www.youtube-nocookie.com/embed/' + video.id + '?autoplay=0&iv_load_policy=3&loop=0&modestbranding=1&rel=0';
+            document.getElementById('youtube-iframe').src = src;
+            document.getElementById('video-title').textContent = video.naam;
+            document.querySelectorAll('.video-knop').forEach(b => b.classList.remove('actief'));
+            if (knop) knop.classList.add('actief');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('fullscreen-knop').style.display = 'block';
+        }
+        function zetVolledigScherm() {
+            const el = document.getElementById('video-wrapper');
+            if (el.requestFullscreen) el.requestFullscreen();
+            else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+            else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+        }
+        function deelVideo() {
+            const iframe = document.getElementById('youtube-iframe');
+            const match = iframe.src.match(/embed\/([^?]+)/);
+            if (!match) return;
+            const link = window.location.origin + window.location.pathname + '?v=' + match[1];
+            navigator.clipboard.writeText(link).then(() => {
+                const knop = document.getElementById('deel-knop');
+                knop.textContent = '✓ Gekopieerd!';
+                setTimeout(() => knop.textContent = '🔗 Deel', 2000);
+            });
+        }
+
+        
+        const params = new URLSearchParams(window.location.search);
+        const directId = params.get('v');
+        if (directId) {
+            document.getElementById('welkom').style.display = 'none';
+            document.getElementById('nav-sectie').style.display = 'none';
+            document.getElementById('deel-knop').style.display = 'none';
+            document.getElementById('video-container').style.display = 'block';
+            const video = videos.find(v => v.id === directId);
+            const naam = video ? video.naam : directId;
+            const src = 'https://www.youtube-nocookie.com/embed/' + directId + '?autoplay=0&iv_load_policy=3&loop=0&modestbranding=1&rel=0';
+            document.getElementById('youtube-iframe').src = src;
+            document.getElementById('video-title').textContent = naam;
+        } else {
+            document.getElementById('nav-sectie').style.display = 'block';
+            init();
+        }
+
+    </script>
+
+    <div id="canva-sectie">
+        <div id="thema-tabs-canva" style="display:flex; overflow-x:auto; background:#16213e; border-bottom:2px solid #0f3460; scrollbar-width:none;"></div>
+        <div id="canva-knoppen"></div>
+    </div>
+
+    <script id="canva-script">
+        const canvaVideos = [
+    { naam: "Thema 01 - Kennismaken - Volledig", thema: "Thema 01 - Kennismaken", sterren: "*-**-***", url: "https://www.canva.com/design/DAF9PTsCjXE/yHunK77nz8o1yofDZjysIQ/edit?utm_content=DAF9PTsCjXE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .1 - Zich voorstellen*", thema: "Thema 01 - Kennismaken", sterren: "*", url: "https://www.canva.com/design/DAF95mlqoNA/cN-3gVqPZo2I6fEAVGLwjA/edit?utm_content=DAF95mlqoNA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .1 - Zich voorstellen**", thema: "Thema 01 - Kennismaken", sterren: "**", url: "https://www.canva.com/design/DAF95oHXhuE/-MhHrLKmXq5fU4q6qrwNsw/edit?utm_content=DAF95oHXhuE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .1 - Zich voorstellen***", thema: "Thema 01 - Kennismaken", sterren: "***", url: "https://www.canva.com/design/DAF95v0rJ2E/XpZUImmlolB9ojX2hiiAPQ/edit?utm_content=DAF95v0rJ2E&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .1 - Zich voorstellen*-**-***", thema: "Thema 01 - Kennismaken", sterren: "*-**-***", url: "https://www.canva.com/design/DAF95sfII9Q/yN9uiHhXgEzsGiuwLKmM8Q/edit?utm_content=DAF95sfII9Q&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .2 - Bedanken en afscheid nemen*", thema: "Thema 01 - Kennismaken", sterren: "*", url: "https://www.canva.com/design/DAF96U3L7XE/oFmRUAL1dgULo3BoHQUyOg/edit?utm_content=DAF96U3L7XE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .2 - Bedanken en afscheid nemen***", thema: "Thema 01 - Kennismaken", sterren: "***", url: "https://www.canva.com/design/DAF96aj0Zmg/YtWxom7AzOLgyaB859EmJA/edit?utm_content=DAF96aj0Zmg&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .2 - Bedanken en afscheid nemen*-**-***", thema: "Thema 01 - Kennismaken", sterren: "*-**-***", url: "https://www.canva.com/design/DAF95lrSmcI/MKEqX4VKtxkWFWPWMXfc4Q/edit?utm_content=DAF95lrSmcI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .3 - Groeten en vragen hoe het gaat*", thema: "Thema 01 - Kennismaken", sterren: "*", url: "https://www.canva.com/design/DAF96TlHFX0/Gk9CX1eF78LJaj4AEd8Urg/edit?utm_content=DAF96TlHFX0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .3 - Groeten en vragen hoe het gaat**", thema: "Thema 01 - Kennismaken", sterren: "**", url: "https://www.canva.com/design/DAF96a5aXyw/o2CmGFIkT4iPXn5EF3XJEQ/edit?utm_content=DAF96a5aXyw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .3 - Groeten en vragen hoe het gaat***", thema: "Thema 01 - Kennismaken", sterren: "***", url: "https://www.canva.com/design/DAF96XZR4qc/C0wKh8KEbhw3QCXdZlnJdQ/edit?utm_content=DAF96XZR4qc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .3 - Groeten en vragen hoe het gaat*-**-***", thema: "Thema 01 - Kennismaken", sterren: "*-**-***", url: "https://www.canva.com/design/DAF95j1NMrQ/-oE5Jl_Cq2syu1MrI3bAZw/edit?utm_content=DAF95j1NMrQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .4 - Vertellen over het gezin*", thema: "Thema 01 - Kennismaken", sterren: "*", url: "https://www.canva.com/design/DAF96TTDFAw/gRouP58ZvGUS_sEKm5LQ6Q/edit?utm_content=DAF96TTDFAw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .4 - Vertellen over het gezin**", thema: "Thema 01 - Kennismaken", sterren: "**", url: "https://www.canva.com/design/DAF96ZXD980/38MKR6jSzk1zCeWvGyBEKQ/edit?utm_content=DAF96ZXD980&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .4 - Vertellen over het gezin***", thema: "Thema 01 - Kennismaken", sterren: "***", url: "https://www.canva.com/design/DAF96dg28Ek/AAzd8_RFFkr3QqNsBqMd9A/edit?utm_content=DAF96dg28Ek&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .4 - Vertellen over het gezin*-**-***", thema: "Thema 01 - Kennismaken", sterren: "*-**-***", url: "https://www.canva.com/design/DAF95iTu4-Q/sSEgV_zZXNqZJzSjH7uN6w/edit?utm_content=DAF95iTu4-Q&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .5 - Vertellen over het verblijf in België*", thema: "Thema 01 - Kennismaken", sterren: "*", url: "https://www.canva.com/design/DAF96X6l_Rs/JLy1AgSaYoOGlVMchzdGiA/edit?utm_content=DAF96X6l_Rs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .5 - Vertellen over het verblijf in België***", thema: "Thema 01 - Kennismaken", sterren: "***", url: "https://www.canva.com/design/DAF96X_Vp5M/8wAo2YJ_QpNu56Lo1c6mlA/edit?utm_content=DAF96X_Vp5M&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .5 - Vertellen over het verblijf in België*-**-***", thema: "Thema 01 - Kennismaken", sterren: "*-**-***", url: "https://www.canva.com/design/DAF95i8ZBq4/STTOdnDsaMdKnq4vINB9oA/edit?utm_content=DAF95i8ZBq4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .6 - De eigen gegevens zeggen*", thema: "Thema 01 - Kennismaken", sterren: "*", url: "https://www.canva.com/design/DAF96W_d7cU/7IcbhbrVJNqbtHs7KNKrmw/edit?utm_content=DAF96W_d7cU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .6 - De eigen gegevens zeggen**", thema: "Thema 01 - Kennismaken", sterren: "**", url: "https://www.canva.com/design/DAF96XAhhnY/LF7oeMXc17h0hOQVotW9lw/edit?utm_content=DAF96XAhhnY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .6 - De eigen gegevens zeggen***", thema: "Thema 01 - Kennismaken", sterren: "***", url: "https://www.canva.com/design/DAF96dTCXBU/Ej_ptXGis8JAXWl1aMUvFA/edit?utm_content=DAF96dTCXBU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "1 .6 - De eigen gegevens zeggen*-**-***", thema: "Thema 01 - Kennismaken", sterren: "*-**-***", url: "https://www.canva.com/design/DAF95hA48Co/byl1GjNpATv_0ckYaqvjhg/edit?utm_content=DAF95hA48Co&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "Thema 02 - School - Volledig", thema: "Thema 02 - School", sterren: "*-**-***", url: "https://www.canva.com/design/DAF9QNVyCDU/4AF7Cy2K6I8a53g62yqW-Q/edit?utm_content=DAF9QNVyCDU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .1 - Regels in de klas**", thema: "Thema 02 - School", sterren: "**", url: "https://www.canva.com/design/DAF_f2btvNk/aPevArpB4lcvDG9dGEIY0w/edit?utm_content=DAF_f2btvNk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .1 - Regels in de klas***", thema: "Thema 02 - School", sterren: "***", url: "https://www.canva.com/design/DAGA4GC1iMk/5t1P64HlDCtjvXwtjV-b8A/edit?utm_content=DAGA4GC1iMk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .1 - Regels in de klas*-**-***", thema: "Thema 02 - School", sterren: "*-**-***", url: "https://www.canva.com/design/DAF_f87OiJk/MI-4nBr7ZLAdhrIwejy0vw/edit?utm_content=DAF_f87OiJk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .2 - Huiswerk*", thema: "Thema 02 - School", sterren: "*", url: "https://www.canva.com/design/DAF-ECTJh-k/1BxJL-lrn8Fepy-JscIedQ/edit?utm_content=DAF-ECTJh-k&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .2 - Huiswerk**", thema: "Thema 02 - School", sterren: "**", url: "https://www.canva.com/design/DAF-EBBYJw8/pe12ShQTKVLHCyhfuTtk9A/edit?utm_content=DAF-EBBYJw8&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .2 - Huiswerk***", thema: "Thema 02 - School", sterren: "***", url: "https://www.canva.com/design/DAF-EFax544/CIe2pPUIHYnMWOhEQfsRaw/edit?utm_content=DAF-EFax544&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .2 - Huiswerk*-**-***", thema: "Thema 02 - School", sterren: "*-**-***", url: "https://www.canva.com/design/DAF9-uLs8mY/BgmdigLlxr2VUHPVmXZrEg/edit?utm_content=DAF9-uLs8mY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .3 - Dingen vragen en geven*", thema: "Thema 02 - School", sterren: "*", url: "https://www.canva.com/design/DAF-EFD3gHc/kMIqnWoRrqHqq2atv880FA/edit?utm_content=DAF-EFD3gHc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .3 - Dingen vragen en geven**", thema: "Thema 02 - School", sterren: "**", url: "https://www.canva.com/design/DAF-ENmdKnQ/RFpXYMOM0qUXljZLrgglVQ/edit?utm_content=DAF-ENmdKnQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .3 - Dingen vragen en geven***", thema: "Thema 02 - School", sterren: "***", url: "https://www.canva.com/design/DAF-EIKg5vA/tCJxJwcJFawGrZGFH6SwhA/edit?utm_content=DAF-EIKg5vA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .3 - Dingen vragen en geven*-**-***", thema: "Thema 02 - School", sterren: "*-**-***", url: "https://www.canva.com/design/DAF9-oqmtjY/VTvcSW-4HMvQXDbkQvkO7g/edit?utm_content=DAF9-oqmtjY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .4 - Om hulp en verduidelijking vragen*", thema: "Thema 02 - School", sterren: "*", url: "https://www.canva.com/design/DAF-ENdtQoY/aZMyFCtIDLPPfnXYx7I5kA/edit?utm_content=DAF-ENdtQoY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .4 - Om hulp en verduidelijking vragen**", thema: "Thema 02 - School", sterren: "**", url: "https://www.canva.com/design/DAF-EJPGugk/UWTCh7YhiALBQkKLugFDiA/edit?utm_content=DAF-EJPGugk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .4 - Om hulp en verduidelijking vragen***", thema: "Thema 02 - School", sterren: "***", url: "https://www.canva.com/design/DAF-EDO13Ek/j60A01piWHp8SEWXp7h6rA/edit?utm_content=DAF-EDO13Ek&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .4 - Om hulp en verduidelijking vragen*-**-***", thema: "Thema 02 - School", sterren: "*-**-***", url: "https://www.canva.com/design/DAF9-sYt0jY/GUMK0bzhKvBdIqRBXvSdcQ/edit?utm_content=DAF9-sYt0jY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .5 - Vertellen wat je op school doet*", thema: "Thema 02 - School", sterren: "*", url: "https://www.canva.com/design/DAF-EWzYpI0/2Z0lX_2HyiVXqeFXwoLrjw/edit?utm_content=DAF-EWzYpI0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .5 - Vertellen wat je op school doet**", thema: "Thema 02 - School", sterren: "**", url: "https://www.canva.com/design/DAF-EdRbzEU/7xk-GlYz623c_XOxTameLg/edit?utm_content=DAF-EdRbzEU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .5 - Vertellen wat je op school doet***", thema: "Thema 02 - School", sterren: "***", url: "https://www.canva.com/design/DAF-ESWLnB4/m2UpjjaR90msPXRU5AzLcg/edit?utm_content=DAF-ESWLnB4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .5 - Vertellen wat je op school doet*-**-***", thema: "Thema 02 - School", sterren: "*-**-***", url: "https://www.canva.com/design/DAF9-tlwjJI/LnA05JAOR5MFZHLBWiH50A/edit?utm_content=DAF9-tlwjJI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .6 - Zich ziek melden*", thema: "Thema 02 - School", sterren: "*", url: "https://www.canva.com/design/DAF-EZI6Ow4/rOGM1oYOyZgf8x-AQ9O6CA/edit?utm_content=DAF-EZI6Ow4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .6 - Zich ziek melden**", thema: "Thema 02 - School", sterren: "**", url: "https://www.canva.com/design/DAF-EdqFxPw/w_UojoV_q74czORorFpLlA/edit?utm_content=DAF-EdqFxPw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .6 - Zich ziek melden***", thema: "Thema 02 - School", sterren: "***", url: "https://www.canva.com/design/DAF-EbacyUw/8cZHn0HDVLIyaJmaytaeXA/edit?utm_content=DAF-EbacyUw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .6 - Zich ziek melden*-**-***", thema: "Thema 02 - School", sterren: "*-**-***", url: "https://www.canva.com/design/DAF9-uBu04M/V-Xsbniz3fedLG9OSP97cg/edit?utm_content=DAF9-uBu04M&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .7 - Klokkijken (1)*", thema: "Thema 02 - School", sterren: "*", url: "https://www.canva.com/design/DAF-EdPLxc8/jeyzXzn5m9O1EO6Or_UCTw/edit?utm_content=DAF-EdPLxc8&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .7 - Klokkijken (1)**", thema: "Thema 02 - School", sterren: "**", url: "https://www.canva.com/design/DAF-EVDbUmY/EDTYoP-UkP_ZCS_rXL-FPA/edit?utm_content=DAF-EVDbUmY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "2 .7 - Klokkijken (1)***", thema: "Thema 02 - School", sterren: "***", url: "https://www.canva.com/design/DAF-EepKcUg/XaePJUtYIfKff1lRh9NA1g/edit?utm_content=DAF-EepKcUg&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "Thema 03 - Eten en drinken - Volledig", thema: "Thema 03 - Eten en drinken", sterren: "*-**-***", url: "https://www.canva.com/design/DAF27qmlvRc/ho_D-kM-0jEuzEh2CPhU0w/edit?utm_content=DAF27qmlvRc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .1 - Eten en drinken aanbieden*", thema: "Thema 03 - Eten en drinken", sterren: "*", url: "https://www.canva.com/design/DAF-Ruo796k/O5iSLyum7V3QPg1GLxeywA/edit?utm_content=DAF-Ruo796k&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .1 - Eten en drinken aanbieden**", thema: "Thema 03 - Eten en drinken", sterren: "**", url: "https://www.canva.com/design/DAF-RpOPQGw/lcAhKupj7XM-8HZWdY17jQ/edit?utm_content=DAF-RpOPQGw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .1 - Eten en drinken aanbieden***", thema: "Thema 03 - Eten en drinken", sterren: "***", url: "https://www.canva.com/design/DAF-RqViiww/lLNawX2w0g5IhDjQF2HFCQ/edit?utm_content=DAF-RqViiww&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .1 - Eten en drinken aanbieden*-**-***", thema: "Thema 03 - Eten en drinken", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-RrVo-jQ/0-RF7o6lGZLeWIHcQI71bg/edit?utm_content=DAF-RrVo-jQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .2 - Iets bestellen in de kantine*", thema: "Thema 03 - Eten en drinken", sterren: "*", url: "https://www.canva.com/design/DAF-RuBCpMY/bCoZBfdQEpJX7kTGG67IMw/edit?utm_content=DAF-RuBCpMY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .2 - Iets bestellen in de kantine**", thema: "Thema 03 - Eten en drinken", sterren: "**", url: "https://www.canva.com/design/DAF-RjMSDFk/V_2mTgqvMzb-slF8SO7k9g/edit?utm_content=DAF-RjMSDFk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .2 - Iets bestellen in de kantine***", thema: "Thema 03 - Eten en drinken", sterren: "***", url: "https://www.canva.com/design/DAF-Rk4pljE/GH2TZ9jRIpzaxbMPGQVFPg/edit?utm_content=DAF-Rk4pljE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .2 - Iets bestellen in de kantine*-**-***", thema: "Thema 03 - Eten en drinken", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-RjX7d9o/2PoejDgBVaCc9Vyf0TIKrQ/edit?utm_content=DAF-RjX7d9o&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .3 - Toezeggen iets mee te nemen*", thema: "Thema 03 - Eten en drinken", sterren: "*", url: "https://www.canva.com/design/DAF-RjvyT2M/ZvGBijYtWlsbRvMFrzK_sw/edit?utm_content=DAF-RjvyT2M&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .3 - Toezeggen iets mee te nemen**", thema: "Thema 03 - Eten en drinken", sterren: "**", url: "https://www.canva.com/design/DAF-Ro3tNCU/ZxJLHDyOAIfaon3pPUMv2Q/edit?utm_content=DAF-Ro3tNCU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .3 - Toezeggen iets mee te nemen***", thema: "Thema 03 - Eten en drinken", sterren: "***", url: "https://www.canva.com/design/DAF-Rk8Zqaw/J_-8gWtq5EDe3NIR--MCuA/edit?utm_content=DAF-Rk8Zqaw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .3 - Toezeggen iets mee te nemen*-**-***", thema: "Thema 03 - Eten en drinken", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-RuJGo5I/gU8ZmSRN_qlQEOAC36OKAA/edit?utm_content=DAF-RuJGo5I&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .4 - Iets vragen in de supermarkt*", thema: "Thema 03 - Eten en drinken", sterren: "*", url: "https://www.canva.com/design/DAF-Rqd8Td0/iyJjOkEzAUOjUUqNd5rJmQ/edit?utm_content=DAF-Rqd8Td0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .4 - Iets vragen in de supermarkt**", thema: "Thema 03 - Eten en drinken", sterren: "**", url: "https://www.canva.com/design/DAF-Rs4U4sk/s_eYPn01AKZCZVYfi6O0Og/edit?utm_content=DAF-Rs4U4sk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .4 - Iets vragen in de supermarkt***", thema: "Thema 03 - Eten en drinken", sterren: "***", url: "https://www.canva.com/design/DAF-Rr7lhU0/bSsGwrqdMAFOU8T32fDXkw/edit?utm_content=DAF-Rr7lhU0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .4 - Iets vragen in de supermarkt*-**-***", thema: "Thema 03 - Eten en drinken", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-RmEdFmk/fx93ynnHrcI2Rm_w4BjGUA/edit?utm_content=DAF-RmEdFmk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .5 - Zeggen wat je (niet) lekker vindt*", thema: "Thema 03 - Eten en drinken", sterren: "*", url: "https://www.canva.com/design/DAF-RprkPtc/b-Dz7Frg9PI6g83c3W0zQg/edit?utm_content=DAF-RprkPtc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .5 - Zeggen wat je (niet) lekker vindt**", thema: "Thema 03 - Eten en drinken", sterren: "**", url: "https://www.canva.com/design/DAF-RmmhbJI/rOdCz0N6Y33neYSMGK6kjg/edit?utm_content=DAF-RmmhbJI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .5 - Zeggen wat je (niet) lekker vindt***", thema: "Thema 03 - Eten en drinken", sterren: "***", url: "https://www.canva.com/design/DAF-RpDiX4U/KtoQ6Glb8j5bf599vg3v5Q/edit?utm_content=DAF-RpDiX4U&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .5 - Zeggen wat je (niet) lekker vindt*-**-***", thema: "Thema 03 - Eten en drinken", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-RofR7ek/G3vSFG1ruQyWjq9efFKDaw/edit?utm_content=DAF-RofR7ek&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .6 - Afrekenen in de winkel*", thema: "Thema 03 - Eten en drinken", sterren: "*", url: "https://www.canva.com/design/DAF-RpO6uuU/iRKYuYDXhJEZEjwCYV8cmg/edit?utm_content=DAF-RpO6uuU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .6 - Afrekenen in de winkel**", thema: "Thema 03 - Eten en drinken", sterren: "**", url: "https://www.canva.com/design/DAF-Rl52RKY/VJyBKTSflWXQ3_bRpq2Lzw/edit?utm_content=DAF-Rl52RKY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .6 - Afrekenen in de winkel***", thema: "Thema 03 - Eten en drinken", sterren: "***", url: "https://www.canva.com/design/DAF-Ri-ZK8A/nmzRaIPUWWI1VD4JMDCKYg/edit?utm_content=DAF-Ri-ZK8A&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .6 - Afrekenen in de winkel*-**-***", thema: "Thema 03 - Eten en drinken", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-RpR8-EM/zf9jTzhFTOZ31qQLM2Y8YQ/edit?utm_content=DAF-RpR8-EM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .7 - Vragen hoeveel iets kost*", thema: "Thema 03 - Eten en drinken", sterren: "*", url: "https://www.canva.com/design/DAF-RtLzs_w/Quqe8HS7HPqdeROa-3JEfw/edit?utm_content=DAF-RtLzs_w&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .7 - Vragen hoeveel iets kost**", thema: "Thema 03 - Eten en drinken", sterren: "**", url: "https://www.canva.com/design/DAF-Rrs2I_M/kaIkfWRSs9Wg23YoCbyBDA/edit?utm_content=DAF-Rrs2I_M&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .7 - Vragen hoeveel iets kost***", thema: "Thema 03 - Eten en drinken", sterren: "***", url: "https://www.canva.com/design/DAF-RkBBpCg/wxY-T-e3cC-9u0iRUWBHxg/edit?utm_content=DAF-RkBBpCg&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "3 .7 - Vragen hoeveel iets kost*-**-***", thema: "Thema 03 - Eten en drinken", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-RnUdjXs/23rbP96CYLn72ox-N0PCdA/edit?utm_content=DAF-RnUdjXs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "Thema 04 - Gezondheid - Volledig", thema: "Thema 04 - Gezondheid", sterren: "*-**-***", url: "https://www.canva.com/design/DAF2bT83kmM/GmK0x_Klhywonjk4wghuCA/edit?utm_content=DAF2bT83kmM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .1 - Vertellen waar je last van hebt*", thema: "Thema 04 - Gezondheid", sterren: "*", url: "https://www.canva.com/design/DAF-EuGtVsk/6gQ8Eqx8K9MyW-AKkOG13A/edit?utm_content=DAF-EuGtVsk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .1 - Vertellen waar je last van hebt**", thema: "Thema 04 - Gezondheid", sterren: "**", url: "https://www.canva.com/design/DAF-EgMzwhM/W9xCXBOCtCqGrGPqwFHxPQ/edit?utm_content=DAF-EgMzwhM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .1 - Vertellen waar je last van hebt***", thema: "Thema 04 - Gezondheid", sterren: "***", url: "https://www.canva.com/design/DAF-Eit8Kpc/_Ja86BdO4FP0auFIRVhA9g/edit?utm_content=DAF-Eit8Kpc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .1 - Vertellen waar je last van hebt*-**-***", thema: "Thema 04 - Gezondheid", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-EV2mIF4/Q4QO50mOULRVlFDuo5W-zw/edit?utm_content=DAF-EV2mIF4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .3 - Een afspraak maken*", thema: "Thema 04 - Gezondheid", sterren: "*", url: "https://www.canva.com/design/DAF-EmRSdL4/j9uFonA0sbNuXKTjls9IxA/edit?utm_content=DAF-EmRSdL4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .3 - Een afspraak maken**", thema: "Thema 04 - Gezondheid", sterren: "**", url: "https://www.canva.com/design/DAF-Esvjg00/E2UWOkwFe4_vjLuTU8LW_g/edit?utm_content=DAF-Esvjg00&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .3 - Een afspraak maken***", thema: "Thema 04 - Gezondheid", sterren: "***", url: "https://www.canva.com/design/DAF-EgsFK7g/NdDSJHKgZTJrrSNo-XAggg/edit?utm_content=DAF-EgsFK7g&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .3 - Een afspraak maken*-**-***", thema: "Thema 04 - Gezondheid", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-EQcTpCw/7iVMzO-5uiyA1KjSz6KtYA/edit?utm_content=DAF-EQcTpCw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .4 - Bij de huisarts*", thema: "Thema 04 - Gezondheid", sterren: "*", url: "https://www.canva.com/design/DAF-EvuUrYY/gSjwJf8jd8CInwz-SMVNkg/edit?utm_content=DAF-EvuUrYY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .4 - Bij de huisarts**", thema: "Thema 04 - Gezondheid", sterren: "**", url: "https://www.canva.com/design/DAF-Elex1mo/zigDq4L0okOdzTymlMIdBg/edit?utm_content=DAF-Elex1mo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .4 - Bij de huisarts***", thema: "Thema 04 - Gezondheid", sterren: "***", url: "https://www.canva.com/design/DAF-Eg-4iLQ/JeBbDklnMuazYzIGraQHkg/edit?utm_content=DAF-Eg-4iLQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .4 - Bij de huisarts*-**-***", thema: "Thema 04 - Gezondheid", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-Edfcco8/BsuN3_5fMnA2VAJkC-NZtA/edit?utm_content=DAF-Edfcco8&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .5 - Bij de apotheek*", thema: "Thema 04 - Gezondheid", sterren: "*", url: "https://www.canva.com/design/DAF-EmZIFsw/WGM7AmGniO6BX19Od8anKw/edit?utm_content=DAF-EmZIFsw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .5 - Bij de apotheek**", thema: "Thema 04 - Gezondheid", sterren: "**", url: "https://www.canva.com/design/DAF-En56vrw/kDEA6noZe1KLpp3hXeJNUg/edit?utm_content=DAF-En56vrw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .5 - Bij de apotheek***", thema: "Thema 04 - Gezondheid", sterren: "***", url: "https://www.canva.com/design/DAF-Emz4_nY/bFcZXqAguQXgjWo-DT7OoA/edit?utm_content=DAF-Emz4_nY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .5 - Bij de apotheek*-**-***", thema: "Thema 04 - Gezondheid", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-EUXCzvs/1dNqoAwubFgDIR5-gLMLVw/edit?utm_content=DAF-EUXCzvs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .6 - Bij de tandarts*", thema: "Thema 04 - Gezondheid", sterren: "*", url: "https://www.canva.com/design/DAF-EgcZ2wQ/9iMryjfaHNhUIMIB-8AAVw/edit?utm_content=DAF-EgcZ2wQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .6 - Bij de tandarts**", thema: "Thema 04 - Gezondheid", sterren: "**", url: "https://www.canva.com/design/DAF-Elh2f5o/OzBW0ELg_uiMjvS-Xwf3HQ/edit?utm_content=DAF-Elh2f5o&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .6 - Bij de tandarts***", thema: "Thema 04 - Gezondheid", sterren: "***", url: "https://www.canva.com/design/DAF-EtrhaFs/e4_OPD5qoDa3dAyvMOaB_A/edit?utm_content=DAF-EtrhaFs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .6 - Bij de tandarts*-**-***", thema: "Thema 04 - Gezondheid", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-EYTJ80U/o-X2SeawFcaGyUvsHr3w_w/edit?utm_content=DAF-EYTJ80U&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .7 - Naar het ziekenhuis*", thema: "Thema 04 - Gezondheid", sterren: "*", url: "https://www.canva.com/design/DAF-Ep4LVqI/trLN9dSx5Krc-p2I42izUQ/edit?utm_content=DAF-Ep4LVqI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .7 - Naar het ziekenhuis**", thema: "Thema 04 - Gezondheid", sterren: "**", url: "https://www.canva.com/design/DAF-El5os4I/Kfc0wrxNpHMYMd-FifT0UQ/edit?utm_content=DAF-El5os4I&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .7 - Naar het ziekenhuis***", thema: "Thema 04 - Gezondheid", sterren: "***", url: "https://www.canva.com/design/DAF-ErM1jjc/TrB97M1aOfTQJa7ny49ayA/edit?utm_content=DAF-ErM1jjc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "4 .7 - Naar het ziekenhuis*-**-***", thema: "Thema 04 - Gezondheid", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-EQEmIHk/fFUoTGQktYcDd82YXfuPpQ/edit?utm_content=DAF-EQEmIHk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "Thema 05 - Kleding - Volledig", thema: "Thema 05 - Kleding", sterren: "*-**-***", url: "https://www.canva.com/design/DAF29xzYC38/vFfy3B5YyhMm5OTem4ze5Q/edit?utm_content=DAF29xzYC38&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "5 .1 - Een gesprek voeren in een winkel*", thema: "Thema 05 - Kleding", sterren: "*", url: "https://www.canva.com/design/DAF-jRcxkKI/Q5fDNmMJGOp_BixHi2jY-g/edit?utm_content=DAF-jRcxkKI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "5 .1 - Een gesprek voeren in een winkel**", thema: "Thema 05 - Kleding", sterren: "**", url: "https://www.canva.com/design/DAF-ijNqB00/wjSysk3fM5swcB74oUoprA/edit?utm_content=DAF-ijNqB00&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "5 .1 - Een gesprek voeren in een winkel***", thema: "Thema 05 - Kleding", sterren: "***", url: "https://www.canva.com/design/DAF-jZ6_324/m3BCLzv-A7tqFpSQBCySaw/edit?utm_content=DAF-jZ6_324&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "5 .1 - Een gesprek voeren in een winkel*-**-***", thema: "Thema 05 - Kleding", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-jjEsjuk/y6BSA4F-0G144DqtqFfPyQ/edit?utm_content=DAF-jjEsjuk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "5 .2 - Kleren passen*", thema: "Thema 05 - Kleding", sterren: "*", url: "https://www.canva.com/design/DAF-jk7raK8/qwWCZ8-vwqPk5us1nhUu4w/edit?utm_content=DAF-jk7raK8&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "5 .2 - Kleren passen**", thema: "Thema 05 - Kleding", sterren: "**", url: "https://www.canva.com/design/DAF-jlzAXpw/hfn3yMegBkhvdYIOIn34DQ/edit?utm_content=DAF-jlzAXpw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "5 .2 - Kleren passen***", thema: "Thema 05 - Kleding", sterren: "***", url: "https://www.canva.com/design/DAF-jmViLB8/d-SOGqS37ycWPj8KquQMkQ/edit?utm_content=DAF-jmViLB8&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "5 .2 - Kleren passen*-**-***", thema: "Thema 05 - Kleding", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-jhhIOJ4/8S8_lZjXDoNzpIrviSJR7w/edit?utm_content=DAF-jhhIOJ4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "5 .3 - Iemands uiterlijk beschrijven*", thema: "Thema 05 - Kleding", sterren: "*", url: "https://www.canva.com/design/DAF-jlC8Ap8/RUfqntZJHrhYSQBNWHtAcQ/edit?utm_content=DAF-jlC8Ap8&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "5 .3 - Iemands uiterlijk beschrijven**", thema: "Thema 05 - Kleding", sterren: "**", url: "https://www.canva.com/design/DAF-jhN_tf4/qGPMxXO2KAHe9KK_ftfEnQ/edit?utm_content=DAF-jhN_tf4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "5 .3 - Iemands uiterlijk beschrijven***", thema: "Thema 05 - Kleding", sterren: "***", url: "https://www.canva.com/design/DAF-jtxZlAY/mwd2Njwk5ujoHFE_hdIbMA/edit?utm_content=DAF-jtxZlAY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "5 .3 - Iemands uiterlijk beschrijven*-**-***", thema: "Thema 05 - Kleding", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-iigIBtE/0RXZt7jpQcBNRVScYIGl1Q/edit?utm_content=DAF-iigIBtE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "5 .4 - Iets ruilen of terugbrengen**", thema: "Thema 05 - Kleding", sterren: "**", url: "https://www.canva.com/design/DAF-jgF4PRg/R54WnfHrlPc938vSGI3jDA/edit?utm_content=DAF-jgF4PRg&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "5 .4 - Iets ruilen of terugbrengen***", thema: "Thema 05 - Kleding", sterren: "***", url: "https://www.canva.com/design/DAF-jh91mKg/w8Oxg9iyuso5WkY9lUhR-A/edit?utm_content=DAF-jh91mKg&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "5 .4 - Iets ruilen of terugbrengen*-**-***", thema: "Thema 05 - Kleding", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-igHTeFE/if4mHkYV3P0VTTMHNJ6bhA/edit?utm_content=DAF-igHTeFE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "Thema 06 - Wonen - Volledig", thema: "Thema 06 - Wonen", sterren: "*-**-***", url: "https://www.canva.com/design/DAF3WCMP1n8/JOSOLu2dHdBSUQPjcWDTyg/edit?utm_content=DAF3WCMP1n8&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "6 .1 - Vertellen waar je woont*", thema: "Thema 06 - Wonen", sterren: "*", url: "https://www.canva.com/design/DAF94pOVg7M/JzVPOA4J3ziiLg96hDTZBA/edit" },
+    { naam: "6 .1 - Vertellen waar je woont**", thema: "Thema 06 - Wonen", sterren: "**", url: "https://www.canva.com/design/DAF94gsMRTY/taZQE_v1NJT49S0jBpM0ag/edit" },
+    { naam: "6 .1 - Vertellen waar je woont***", thema: "Thema 06 - Wonen", sterren: "***", url: "https://www.canva.com/design/DAF96WRlJQg/eTI2s3yZU7CyigangKP-9w/edit?utm_content=DAF96WRlJQg&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "6 .1 - Vertellen waar je woont*-**-***", thema: "Thema 06 - Wonen", sterren: "*-**-***", url: "https://www.canva.com/design/DAF942e7LvE/JgWka-e5Ka6Nn8hYHK7IdQ/edit" },
+    { naam: "6 .2 - Je huis beschrijven (1)*", thema: "Thema 06 - Wonen", sterren: "*", url: "https://www.canva.com/design/DAF940U9TEo/DprwO5FQbZSBxaPxvjA_lw/edit" },
+    { naam: "6 .2 - Je huis beschrijven (1)**", thema: "Thema 06 - Wonen", sterren: "**", url: "https://www.canva.com/design/DAF94y9r8G0/eE4Tx7LGgbIhjGSCFxM5DA/edit" },
+    { naam: "6 .2 - Je huis beschrijven (1)***", thema: "Thema 06 - Wonen", sterren: "***", url: "https://www.canva.com/design/DAF943ioMEI/aubxGDf7XINy2guiSRcaQA/edit" },
+    { naam: "6 .2 - Je huis beschrijven (1)*-**-***", thema: "Thema 06 - Wonen", sterren: "*-**-***", url: "https://www.canva.com/design/DAF94ioAcPM/GhOUT6uUzd_XsiA8h3wchA/edit" },
+    { naam: "6 .3 - Je huis beschrijven (2)*", thema: "Thema 06 - Wonen", sterren: "*", url: "https://www.canva.com/design/DAF940nq6SM/ksbgi8v8vkVg9Wm7n8voKA/edit" },
+    { naam: "6 .3 - Je huis beschrijven (2)**", thema: "Thema 06 - Wonen", sterren: "**", url: "https://www.canva.com/design/DAF949cRoFA/HdBixsKxD3rzv4nDk0idkg/edit" },
+    { naam: "6 .3 - Je huis beschrijven (2)***", thema: "Thema 06 - Wonen", sterren: "***", url: "https://www.canva.com/design/DAF94_9A3cY/jAFt2eHmovF2k6UROkVCtw/edit" },
+    { naam: "6 .3 - Je huis beschrijven (2)*-**-***", thema: "Thema 06 - Wonen", sterren: "*-**-***", url: "https://www.canva.com/design/DAF94kmJTv0/r-vANRBJMdkOmyluzXL_og/edit" },
+    { naam: "6 .4 - Problemen in huis beschrijven*", thema: "Thema 06 - Wonen", sterren: "*", url: "https://www.canva.com/design/DAF94xNEsrU/WlAtJ0ISKQmPc1l7Esq4pQ/edit" },
+    { naam: "6 .4 - Problemen in huis beschrijven**", thema: "Thema 06 - Wonen", sterren: "**", url: "https://www.canva.com/design/DAF945q5AB0/_ZigJfa-1gpVFqO9ZwGzJA/edit" },
+    { naam: "6 .4 - Problemen in huis beschrijven***", thema: "Thema 06 - Wonen", sterren: "***", url: "https://www.canva.com/design/DAF96bhG80I/Wyp50XR5O7eNRZYTMH2yaw/edit" },
+    { naam: "6 .4 - Problemen in huis beschrijven*-**-***", thema: "Thema 06 - Wonen", sterren: "*-**-***", url: "https://www.canva.com/design/DAF94hIgmbc/rIANMkq61WpkjGB-dc_IIQ/edit" },
+    { naam: "6 .5 - Praten over het weer*", thema: "Thema 06 - Wonen", sterren: "*", url: "https://www.canva.com/design/DAF949VDDms/QhYT6j_NlhSKBqaa3mJFRA/edit" },
+    { naam: "6 .5 - Praten over het weer**", thema: "Thema 06 - Wonen", sterren: "**", url: "https://www.canva.com/design/DAF940tQu5k/6owAH68NcdpJP4bWm4rRgQ/edit" },
+    { naam: "6 .5 - Praten over het weer***", thema: "Thema 06 - Wonen", sterren: "***", url: "https://www.canva.com/design/DAF940NGxY0/WtMw3tpA6qzQiZSE1edOqw/edit" },
+    { naam: "6 .5 - Praten over het weer*-**-***", thema: "Thema 06 - Wonen", sterren: "*-**-***", url: "https://www.canva.com/design/DAF94rYiusI/4ZZL5IgV_fCjKEdY6mUxtg/edit" },
+    { naam: "Thema 07 - Vrije tijd - Volledig", thema: "Thema 07 - Vrije tijd", sterren: "*-**-***", url: "https://www.canva.com/design/DAF2-BdcHUo/_DAGxFHR7yJ_WPf8AePI5A/edit?utm_content=DAF2-BdcHUo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .1 - Praten over je vrije tijd (o.t.t.)*", thema: "Thema 07 - Vrije tijd", sterren: "*", url: "https://www.canva.com/design/DAF-juhoBns/lKqo81jp8PAtUVrqLQA1pA/edit?utm_content=DAF-juhoBns&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .1 - Praten over je vrije tijd (o.t.t.)**", thema: "Thema 07 - Vrije tijd", sterren: "**", url: "https://www.canva.com/design/DAF-jpBMMTQ/JWFWZrcUWZy7fNmyoxhVYg/edit?utm_content=DAF-jpBMMTQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .1 - Praten over je vrije tijd (o.t.t.)***", thema: "Thema 07 - Vrije tijd", sterren: "***", url: "https://www.canva.com/design/DAF-jsfvSYk/ADLGjiWfUB-_yvkuvEMSfA/edit?utm_content=DAF-jsfvSYk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .1 - Praten over je vrije tijd (o.t.t.)*-**-***", thema: "Thema 07 - Vrije tijd", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-jod7dQ4/10PbCQoiGnssdllk-GIOIg/edit?utm_content=DAF-jod7dQ4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .2 - Praten over je vrije tijd (v.t.t.)*", thema: "Thema 07 - Vrije tijd", sterren: "*", url: "https://www.canva.com/design/DAF-j5A-StQ/fBOwUMwspHltXQkRybUH3Q/edit?utm_content=DAF-j5A-StQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .2 - Praten over je vrije tijd (v.t.t.)**", thema: "Thema 07 - Vrije tijd", sterren: "**", url: "https://www.canva.com/design/DAF-j2NvZpk/520KWeE7JwW-h_I3zf96rw/edit?utm_content=DAF-j2NvZpk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .2 - Praten over je vrije tijd (v.t.t.)***", thema: "Thema 07 - Vrije tijd", sterren: "***", url: "https://www.canva.com/design/DAF-jyYRG5E/Hxo6W5MMclAuF5TVHphwHA/edit?utm_content=DAF-jyYRG5E&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .2 - Praten over je vrije tijd (v.t.t.)*-**-***", thema: "Thema 07 - Vrije tijd", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-jrvsmBs/KlR5UMh6FPbtNKcV29McXA/edit?utm_content=DAF-jrvsmBs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .3 - Praten over hobby&#39;s*", thema: "Thema 07 - Vrije tijd", sterren: "*", url: "https://www.canva.com/design/DAF-j7hpGjw/bqssya1wYmFIPauonl2O3g/edit?utm_content=DAF-j7hpGjw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .3 - Praten over hobby&#39;s**", thema: "Thema 07 - Vrije tijd", sterren: "**", url: "https://www.canva.com/design/DAF-jwkiutI/xsREpt_mvS94JqVgDrHJEQ/edit?utm_content=DAF-jwkiutI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .3 - Praten over hobby&#39;s***", thema: "Thema 07 - Vrije tijd", sterren: "***", url: "https://www.canva.com/design/DAF-j5z0MYc/leGFdI4gM6OeDxfs0Nfl4g/edit?utm_content=DAF-j5z0MYc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .3 - Praten over hobby&#39;s*-**-***", thema: "Thema 07 - Vrije tijd", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-jqDx_7Q/pwTwElMQPmHHoKwOc4pf0Q/edit?utm_content=DAF-jqDx_7Q&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .4 - Samen iets afspreken*", thema: "Thema 07 - Vrije tijd", sterren: "*", url: "https://www.canva.com/design/DAF-j-_q28w/fqhtc3ZOV4hzzi7IKvz7yA/edit?utm_content=DAF-j-_q28w&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .4 - Samen iets afspreken**", thema: "Thema 07 - Vrije tijd", sterren: "**", url: "https://www.canva.com/design/DAF-j-c4TDw/TojrnEZG2mhzBiZdyRLKuA/edit?utm_content=DAF-j-c4TDw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .4 - Samen iets afspreken***", thema: "Thema 07 - Vrije tijd", sterren: "***", url: "https://www.canva.com/design/DAF-j6W5W0s/wM2U6NhRKbzW_djhavX0Kw/edit?utm_content=DAF-j6W5W0s&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .4 - Samen iets afspreken*-**-***", thema: "Thema 07 - Vrije tijd", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-jtJtjV4/FHRD7aviO1MyIdvx2NXu3g/edit?utm_content=DAF-jtJtjV4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .5 - Uitnodiging voor een feest*", thema: "Thema 07 - Vrije tijd", sterren: "*", url: "https://www.canva.com/design/DAF-jx2ytC0/pbSerBkMjUYSeB3BHToenA/edit?utm_content=DAF-jx2ytC0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .5 - Uitnodiging voor een feest**", thema: "Thema 07 - Vrije tijd", sterren: "**", url: "https://www.canva.com/design/DAF-j9YxthI/CGG_UWkTXXTT-0ISuufrgw/edit?utm_content=DAF-j9YxthI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .5 - Uitnodiging voor een feest***", thema: "Thema 07 - Vrije tijd", sterren: "***", url: "https://www.canva.com/design/DAF-j8MZErs/CSyLyfNzv_ZHsMV6PeXzkw/edit?utm_content=DAF-j8MZErs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .5 - Uitnodiging voor een feest*-**-***", thema: "Thema 07 - Vrije tijd", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-jnfiI0c/XgE-euYJU4BeTFUHCKJCeA/edit?utm_content=DAF-jnfiI0c&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .6 - Praten over activiteiten in de buurt*", thema: "Thema 07 - Vrije tijd", sterren: "*", url: "https://www.canva.com/design/DAF-j2I-NVo/5RcCFI7Zh8PomieuwoMJEw/edit?utm_content=DAF-j2I-NVo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .6 - Praten over activiteiten in de buurt**", thema: "Thema 07 - Vrije tijd", sterren: "**", url: "https://www.canva.com/design/DAF-j_j_msc/fKThGYHpVt07KTIq2IAljg/edit?utm_content=DAF-j_j_msc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .6 - Praten over activiteiten in de buurt***", thema: "Thema 07 - Vrije tijd", sterren: "***", url: "https://www.canva.com/design/DAF-j7dlIMo/kSTQocoafaDODxjBC11wjw/edit?utm_content=DAF-j7dlIMo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "7 .6 - Praten over activiteiten in de buurt*-**-***", thema: "Thema 07 - Vrije tijd", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-jvCdYRM/UoVkb5CUYif617vWLFwxvg/edit?utm_content=DAF-jvCdYRM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "Thema 08 - Reizen - Volledig", thema: "Thema 08 - Reizen", sterren: "*-**-***", url: "https://www.canva.com/design/DAF9oNwx7tQ/ZpZBKyOGOMT5h5MrjTdlhQ/edit?utm_content=DAF9oNwx7tQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "8 .1 - Praten over reizen*", thema: "Thema 08 - Reizen", sterren: "*", url: "https://www.canva.com/design/DAF-LFSlvX8/HfBb_CFDcGexSXW1jW-JLw/edit?utm_content=DAF-LFSlvX8&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "8 .1 - Praten over reizen**", thema: "Thema 08 - Reizen", sterren: "**", url: "https://www.canva.com/design/DAF-LHwO9Ic/yj7gxfOEmyPlfWUIFcVWTg/edit?utm_content=DAF-LHwO9Ic&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "8 .1 - Praten over reizen***", thema: "Thema 08 - Reizen", sterren: "***", url: "https://www.canva.com/design/DAF-LL1aNRo/OqhTklzt0v6XCWkX5P22tg/edit?utm_content=DAF-LL1aNRo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "8 .1 - Praten over reizen*-**-***", thema: "Thema 08 - Reizen", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-LOTQQJA/o8Rg-vZVyaAMwPR-6-RNMw/edit?utm_content=DAF-LOTQQJA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "8 .2 - Reizen met het ov*", thema: "Thema 08 - Reizen", sterren: "*", url: "https://www.canva.com/design/DAF-LEDn51Y/2Pawx_L6brVQ9Ptn4fSwfg/edit?utm_content=DAF-LEDn51Y&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "8 .2 - Reizen met het ov**", thema: "Thema 08 - Reizen", sterren: "**", url: "https://www.canva.com/design/DAF-LE8R0JA/hVZV9_VC6810rqOZ_7voew/edit?utm_content=DAF-LE8R0JA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "8 .2 - Reizen met het ov***", thema: "Thema 08 - Reizen", sterren: "***", url: "https://www.canva.com/design/DAF-LKWIGLU/0euqJAQx33qnNSKZcrO-NA/edit?utm_content=DAF-LKWIGLU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "8 .2 - Reizen met het ov*-**-***", thema: "Thema 08 - Reizen", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-LKWIGLU/0euqJAQx33qnNSKZcrO-NA/edit?utm_content=DAF-LKWIGLU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "8 .3 - De weg vragen*", thema: "Thema 08 - Reizen", sterren: "*", url: "https://www.canva.com/design/DAF-LACuk7A/bSnoRzRSxq9gfUqMNLojUw/edit?utm_content=DAF-LACuk7A&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "8 .3 - De weg vragen**", thema: "Thema 08 - Reizen", sterren: "**", url: "https://www.canva.com/design/DAF-LC4OTVE/OrzhvAe_OS5svlGDKXRVCw/edit?utm_content=DAF-LC4OTVE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "8 .3 - De weg vragen***", thema: "Thema 08 - Reizen", sterren: "***", url: "https://www.canva.com/design/DAF-LMIOeO0/NifSPQNXoRMvNMv3iRDV1w/edit?utm_content=DAF-LMIOeO0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "8 .3 - De weg vragen*-**-***", thema: "Thema 08 - Reizen", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-LMIOeO0/NifSPQNXoRMvNMv3iRDV1w/edit?utm_content=DAF-LMIOeO0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "8 .4 - Een gesprekje bij de bushalte*", thema: "Thema 08 - Reizen", sterren: "*", url: "https://www.canva.com/design/DAF-LCIr1zU/SG4kqG1Spec2-CP5kUKd_w/edit?utm_content=DAF-LCIr1zU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "8 .4 - Een gesprekje bij de bushalte**", thema: "Thema 08 - Reizen", sterren: "**", url: "https://www.canva.com/design/DAF-LFrMm5c/FZJdYCbVX1ilErul7nP0TQ/edit?utm_content=DAF-LFrMm5c&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "8 .4 - Een gesprekje bij de bushalte***", thema: "Thema 08 - Reizen", sterren: "***", url: "https://www.canva.com/design/DAF-LEW1y60/B4_CrHsjZwqyFeBHKrpU4g/edit?utm_content=DAF-LEW1y60&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "8 .4 - Een gesprekje bij de bushalte*-**-***", thema: "Thema 08 - Reizen", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-LJG9a6I/gtzK2joWpQgSDfJb_tjWdA/edit?utm_content=DAF-LJG9a6I&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "Thema 09 - Werk - Volledig", thema: "Thema 09 - Werk", sterren: "*-**-***", url: "https://www.canva.com/design/DAF3WBaemIc/zwaBPEQaZzFmRxBD7Ybmmw/edit?utm_content=DAF3WBaemIc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "9 .1 - Vertellen wat je kunt en leuk vindt*", thema: "Thema 09 - Werk", sterren: "*", url: "https://www.canva.com/design/DAF-kAQDlRg/VXEBcySP3yiG2qtdJM7m5g/edit?utm_content=DAF-kAQDlRg&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "9 .1 - Vertellen wat je kunt en leuk vindt**", thema: "Thema 09 - Werk", sterren: "**", url: "https://www.canva.com/design/DAF-kCmfICM/rE4r4TQmNKQwgPokp5_drA/edit?utm_content=DAF-kCmfICM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "9 .1 - Vertellen wat je kunt en leuk vindt***", thema: "Thema 09 - Werk", sterren: "***", url: "https://www.canva.com/design/DAF-kBOVdn0/1g69tAnezA_uzvBVifVdHQ/edit?utm_content=DAF-kBOVdn0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "9 .1 - Vertellen wat je kunt en leuk vindt*-**-***", thema: "Thema 09 - Werk", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-kKVy4jQ/BTk42vBOOVZdVTC1Q3ku2w/edit?utm_content=DAF-kKVy4jQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "9 .2 - Werk zoeken en vinden*-**-***", thema: "Thema 09 - Werk", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-kIKjZ60/UyGoOVO3mtMw_clZ2-jRQA/edit?utm_content=DAF-kIKjZ60&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "9 .3 - Een sollicitatiegesprek voeren*", thema: "Thema 09 - Werk", sterren: "*", url: "https://www.canva.com/design/DAF_J-bJB3E/O60robof92P8N0WzOk53zA/edit?utm_content=DAF_J-bJB3E&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "9 .3 - Een sollicitatiegesprek voeren**", thema: "Thema 09 - Werk", sterren: "**", url: "https://www.canva.com/design/DAF-kFDlGzk/17hjqS5VsnLTYU-cAWNqpg/edit?utm_content=DAF-kFDlGzk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "9 .3 - Een sollicitatiegesprek voeren***", thema: "Thema 09 - Werk", sterren: "***", url: "https://www.canva.com/design/DAF-kI-RLBM/P7bB6JqZ8tansTJ2rFCBcw/edit?utm_content=DAF-kI-RLBM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "9 .3 - Een sollicitatiegesprek voeren*-**-***", thema: "Thema 09 - Werk", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-kEMFL0s/yRGgSmktm1CIGZ7HwvWQrQ/edit?utm_content=DAF-kEMFL0s&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "9 .4 - Zich voorstellen op het werk*-**-***", thema: "Thema 09 - Werk", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-kGgFq5E/trEHIbx9D_kNdx-aak3XFQ/edit?utm_content=DAF-kGgFq5E&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "9 .5 - Om hulp vragen**", thema: "Thema 09 - Werk", sterren: "**", url: "https://www.canva.com/design/DAF-kOiqUcc/lynHB7yrdfpADSpNnt6R8g/edit?utm_content=DAF-kOiqUcc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "9 .5 - Om hulp vragen***", thema: "Thema 09 - Werk", sterren: "***", url: "https://www.canva.com/design/DAF-kDuwVTc/9Fwin0-PqPOk8xixsq2-Eg/edit?utm_content=DAF-kDuwVTc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "9 .5 - Om hulp vragen*-**-***", thema: "Thema 09 - Werk", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-kGgFq5E/trEHIbx9D_kNdx-aak3XFQ/edit?utm_content=DAF-kGgFq5E&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "9 .6 - Zich ziek melden en vrij vragen*", thema: "Thema 09 - Werk", sterren: "*", url: "https://www.canva.com/design/DAF-kL4NSkk/uyGaDV1VyGPZbxvJGWdaWQ/edit?utm_content=DAF-kL4NSkk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "9 .6 - Zich ziek melden en vrij vragen**", thema: "Thema 09 - Werk", sterren: "**", url: "https://www.canva.com/design/DAF-kIzzGvQ/0gBV0EmJ9mhix5-cbp7N8Q/edit?utm_content=DAF-kIzzGvQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "9 .6 - Zich ziek melden en vrij vragen***", thema: "Thema 09 - Werk", sterren: "***", url: "https://www.canva.com/design/DAF-kKs01GA/WVA6reRrlEj9Tv_1nTgchQ/edit?utm_content=DAF-kKs01GA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "9 .6 - Zich ziek melden en vrij vragen*-**-***", thema: "Thema 09 - Werk", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-kMVgDaE/wLPYYAVt1LB6JhmTQW6eaw/edit?utm_content=DAF-kMVgDaE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "Thema 10 - Kinderen - Volledig", thema: "Thema 10 - Kinderen", sterren: "*-**-***", url: "https://www.canva.com/design/DAF9OX4tfcI/gKQjIZRV5UJfmVUxH-EaPw/edit?utm_content=DAF9OX4tfcI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "10 .1 - Praten over familie en kinderen*", thema: "Thema 10 - Kinderen", sterren: "*", url: "https://www.canva.com/design/DAF_kdwRie8/wYMlX0HbMIAqWndZAfUKyg/edit?utm_content=DAF_kdwRie8&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "10 .1 - Praten over familie en kinderen**", thema: "Thema 10 - Kinderen", sterren: "**", url: "https://www.canva.com/design/DAF_kd4p9x0/MVW39Gaar8uZEdO3YygA8Q/edit?utm_content=DAF_kd4p9x0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "10 .1 - Praten over familie en kinderen*-**-***", thema: "Thema 10 - Kinderen", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-LafsXvA/oRMq8Qbv9K9BtVyT3cgs1w/edit?utm_content=DAF-LafsXvA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "10 .2 - Praten met andere ouders*", thema: "Thema 10 - Kinderen", sterren: "*", url: "https://www.canva.com/design/DAF_ki0O-IM/5frHOdSJ4f9s-3tJ_iJUTQ/edit?utm_content=DAF_ki0O-IM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "10 .2 - Praten met andere ouders**", thema: "Thema 10 - Kinderen", sterren: "**", url: "https://www.canva.com/design/DAF_khNvwlc/lXRf44tLs3y9zPhhwX-ZbA/edit?utm_content=DAF_khNvwlc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "10 .2 - Praten met andere ouders*-**-***", thema: "Thema 10 - Kinderen", sterren: "*-**-***", url: "https://www.canva.com/design/DAF_kg6AEw0/rAOn4plSXiJ34TFhzjs9Uw/edit?utm_content=DAF_kg6AEw0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "10 .3 - Helpen op school*", thema: "Thema 10 - Kinderen", sterren: "*", url: "https://www.canva.com/design/DAF_kr8FPOM/gwqWcn4ltCx6uHxA24uoiQ/edit?utm_content=DAF_kr8FPOM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "10 .3 - Helpen op school**", thema: "Thema 10 - Kinderen", sterren: "**", url: "https://www.canva.com/design/DAF_khNvwlc/lXRf44tLs3y9zPhhwX-ZbA/edit?utm_content=DAF_khNvwlc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "10 .3 - Helpen op school***", thema: "Thema 10 - Kinderen", sterren: "***", url: "https://www.canva.com/design/DAF_kuHfJ2I/NnjXTEhNAoh3BxQS6s5yuQ/edit?utm_content=DAF_kuHfJ2I&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "10 .3 - Helpen op school*-**-***", thema: "Thema 10 - Kinderen", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-LRT1QuE/HQuUvWmRPxqi_3JVdzu0BA/edit?utm_content=DAF-LRT1QuE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "10 .4 - Praten over hoe het met je kind gaat*", thema: "Thema 10 - Kinderen", sterren: "*", url: "https://www.canva.com/design/DAF-LQC2lKg/miGNEEdX5uPaiLunF1oP4Q/edit?utm_content=DAF-LQC2lKg&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "0 .4 - Praten over hoe het met je kind gaat**", thema: "Thema 10 - Kinderen", sterren: "**", url: "https://www.canva.com/design/DAF-LUydqoM/N_1bFXmb7zB8k-hy-TGB3g/edit?utm_content=DAF-LUydqoM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "0 .4 - Praten over hoe het met je kind gaat***", thema: "Thema 10 - Kinderen", sterren: "***", url: "https://www.canva.com/design/DAF-Ldg6q8A/svU89WXy1J0GIQOZUBPrjQ/edit?utm_content=DAF-Ldg6q8A&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "0 .4 - Praten over hoe het met je kind gaat*-**-***", thema: "Thema 10 - Kinderen", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-LUiidGM/QlAN1NxqpJbeqK1m0Wse5Q/edit?utm_content=DAF-LUiidGM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "0 .5 - Praten over hoe het op school gaat*", thema: "Thema 10 - Kinderen", sterren: "*", url: "https://www.canva.com/design/DAF-LS-MPv4/uiHLOEvjfHMb2qD1XdkNLw/edit?utm_content=DAF-LS-MPv4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "0 .5 - Praten over hoe het op school gaat**", thema: "Thema 10 - Kinderen", sterren: "**", url: "https://www.canva.com/design/DAF-LT9PFUw/6Pz99eyf1PXD9mU-rOaYag/edit?utm_content=DAF-LT9PFUw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "0 .5 - Praten over hoe het op school gaat***", thema: "Thema 10 - Kinderen", sterren: "***", url: "https://www.canva.com/design/DAF-LbkBwRw/R9DSObXs_Ly6tQ8eIlbU9g/edit?utm_content=DAF-LbkBwRw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
+    { naam: "0 .5 - Praten over hoe het op school gaat*-**-***", thema: "Thema 10 - Kinderen", sterren: "*-**-***", url: "https://www.canva.com/design/DAF-LYdtanQ/15e3SY6yu9HwmaorVLo27Q/edit?utm_content=DAF-LYdtanQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" }
+        ];
+        const canvaThemas = [...new Set(canvaVideos.map(v => v.thema))];
+        let actiefCanvaThema = canvaThemas[0];
+
+        function toonSectie(sectie) {
+            document.getElementById('video-sectie').style.display = sectie === 'video' ? 'flex' : 'none';
+            document.getElementById('canva-sectie').style.display = sectie === 'canva' ? 'flex' : 'none';
+            document.getElementById('tab-video').classList.toggle('actief', sectie === 'video');
+            document.getElementById('tab-canva').classList.toggle('actief', sectie === 'canva');
+            if (sectie === 'canva') initCanva();
+        }
+
+        let canvaInit = false;
+        function initCanva() {
+            if (canvaInit) return;
+            canvaInit = true;
+            const tabsEl = document.getElementById('thema-tabs-canva');
+            canvaThemas.forEach(t => {
+                const btn = document.createElement('button');
+                btn.className = 'thema-tab' + (t === actiefCanvaThema ? ' actief' : '');
+                btn.textContent = t.replace('Thema ', 'T').replace(' - ', ' ');
+                btn.addEventListener('click', () => {
+                    actiefCanvaThema = t;
+                    document.querySelectorAll('#thema-tabs-canva .thema-tab').forEach((b, i) => b.classList.toggle('actief', canvaThemas[i] === t));
+                    maakCanvaKnoppen();
+                });
+                tabsEl.appendChild(btn);
+            });
+            maakCanvaKnoppen();
+        }
+
+        function maakCanvaKnoppen() {
+            const lijst = document.getElementById('canva-knoppen');
+            lijst.innerHTML = '';
+            canvaVideos.filter(v => v.thema === actiefCanvaThema).forEach(item => {
+                const rij = document.createElement('div');
+                rij.style.cssText = 'display:flex; align-items:center; gap:8px; margin-bottom:10px;';
+                const badge = item.sterren === '*-**-***' ? '✦' : item.sterren;
+                const knop = document.createElement('a');
+                knop.className = 'canva-knop';
+                knop.href = item.url;
+                knop.target = '_blank';
+                knop.rel = 'noopener';
+                knop.innerHTML = '<span class="niveau-badge">' + badge + '</span><span>' + item.naam.replace(/[*]+/, '').replace('*-**-***', '').trim() + '</span>';
+                knop.style.flex = '1';
+                const deelKnop = document.createElement('button');
+                deelKnop.className = 'deel-knop-canva';
+                deelKnop.textContent = '🔗 Deel';
+                deelKnop.onclick = (e) => {
+                    e.stopPropagation();
+                    navigator.clipboard.writeText(item.url).then(() => {
+                        deelKnop.textContent = '✓';
+                        setTimeout(() => deelKnop.textContent = '🔗 Deel', 2000);
+                    });
+                };
+                rij.appendChild(knop);
+                rij.appendChild(deelKnop);
+                lijst.appendChild(rij);
+            });
+        }
+    </script>
+
+</body>
+</html>
