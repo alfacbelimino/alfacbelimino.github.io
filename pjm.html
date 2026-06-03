@@ -38,8 +38,7 @@
 </style>
 </head>
 <body>
-    <header id="hoofd-header"><h1>PJM — Oefenvideo's</h1></header>
-    <div id="welkom"><div class="icoon">▶</div><p>Kies een thema hierboven<br>en dan een video.</p></div>
+    <div id="welkom"><div class="icoon">▶</div><p>Kies een thema <br>en een video.</p></div>
     <div id="video-container">
         <div id="video-title"></div>
         <div id="video-wrapper"><iframe id="youtube-iframe" src=""
@@ -258,6 +257,7 @@
             document.querySelectorAll('.video-knop').forEach(b => b.classList.remove('actief'));
             if (knop) knop.classList.add('actief');
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            history.replaceState(null, '', '?v=' + video.id);
         }
 
         
