@@ -280,12 +280,13 @@
         if (directId) {
             document.getElementById('welkom').style.display = 'none';
             document.getElementById('nav-sectie').style.display = 'none';
+            document.getElementById('deel-knop').style.display = 'none';
             document.getElementById('video-container').style.display = 'block';
             const video = videos.find(v => v.id === directId);
+            const naam = video ? video.naam : directId;
             const src = 'https://www.youtube-nocookie.com/embed/' + directId + '?autoplay=0&iv_load_policy=3&loop=0&modestbranding=1&rel=0';
             document.getElementById('youtube-iframe').src = src;
-            document.getElementById('video-title').textContent = video ? video.naam : '';
-            document.getElementById('deel-knop').style.display = 'none';
+            document.getElementById('video-title').textContent = naam;
         } else {
             document.getElementById('nav-sectie').style.display = 'block';
             init();
