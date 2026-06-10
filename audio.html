@@ -60,6 +60,10 @@
         <button class="filter-knop" data-niveau="mond 1.2" onclick="filterNiveau(this)">mond 1.2</button>
         <button class="filter-knop" data-niveau="mond 2" onclick="filterNiveau(this)">mond 2</button>
         <button class="filter-knop" data-niveau="Niet opgegeven" onclick="filterNiveau(this)">Niet opgegeven</button>
+        <div id="zoek-wrapper">
+        <input id="zoek-input" type="text" placeholder="Zoeken..." oninput="zoek Audio(this.value)">
+        <button id="zoek-knop" onclick="toggleZoek()">🔍</button>
+</div>
     </div>
 
     <!-- LIJST -->
@@ -799,6 +803,35 @@
         } else {
             maakKnoppen();
         }
+        function toggleZoek() {
+    const input = document.getElementById('zoek-input');
+    input.classList.toggle('open');
+    if (input.classList.contains('open')) {
+        input.focus();
+    } else {
+        input.value = '';
+        zoekVideos('');
+    }
+}
+function zoekVideos(term) {
+    const zoekterm = term.trim().toLowerCase();
+    if (!zoekterm) {
+        maakKnoppen(); return;
+    }
+    const resultaten = videos.filter(v => v.naam.toLowerCase().includes(zoekterm));
+    const lijst = document.getElementById('knoppen-sectie');
+    lijst.innerHTML = '';
+    resultaten.forEach(video => {
+        const knop = document.createElement('button');
+        knop.className = 'video-knop';
+        const sterren = video.naam.includes('***') ? '***' : video.naam.includes('**') ? '**' : '*';
+        const basis = video.naam.replace(/\*+/, '').trim();
+        knop.innerHTML = '<span class="niveau-badge">' + sterren + '</span><span>' + basis + '</span>';
+        knop.addEventListener('click', () => speelAf(video, knop));
+        lijst.appendChild(knop);
+    });
+}
+}
     </script>
 </body>
 </html>
