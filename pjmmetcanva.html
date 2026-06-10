@@ -83,7 +83,10 @@
             </div>
         </div>
         <div id="nav-sectie">
-            <div id="thema-tabs"></div>
+            <div id="thema-tabs"><div id="zoek-wrapper">
+    <input id="zoek-input" type="text" placeholder="Zoeken..." oninput="zoekVideos(this.value)">
+    <button id="zoek-knop" onclick="toggleZoek()">🔍</button>
+</div></div>
             <div id="knoppen-sectie"></div>
         </div>
     </div>
@@ -632,6 +635,35 @@
             document.getElementById('nav-sectie').style.display = 'block';
             init();
         }
+        function toggleZoek() {
+    const input = document.getElementById('zoek-input');
+    input.classList.toggle('open');
+    if (input.classList.contains('open')) {
+        input.focus();
+    } else {
+        input.value = '';
+        zoekVideos('');
+    }
+}
+function zoekVideos(term) {
+    const zoekterm = term.trim().toLowerCase();
+    if (!zoekterm) {
+        maakKnoppen(); return;
+    }
+    const resultaten = videos.filter(v => v.naam.toLowerCase().includes(zoekterm));
+    const lijst = document.getElementById('knoppen-sectie');
+    lijst.innerHTML = '';
+    resultaten.forEach(video => {
+        const knop = document.createElement('button');
+        knop.className = 'video-knop';
+        const sterren = video.naam.includes('***') ? '***' : video.naam.includes('**') ? '**' : '*';
+        const basis = video.naam.replace(/\*+/, '').trim();
+        knop.innerHTML = '<span class="niveau-badge">' + sterren + '</span><span>' + basis + '</span>';
+        knop.addEventListener('click', () => speelAf(video, knop));
+        lijst.appendChild(knop);
+    });
+}
+        
     </script>
 </body>
 </html>
