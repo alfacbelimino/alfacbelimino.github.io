@@ -46,7 +46,7 @@
         .video-knop, .canva-knop { display: flex; align-items: center; width: 100%; padding: 14px 16px; margin-bottom: 10px; background: #ffffff; border: 2px solid #d0e8ec; border-radius: 10px; color: #1a3a4a; font-size: 0.95rem; font-family: Georgia, serif; text-align: left; cursor: pointer; gap: 12px; transition: background 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; line-height: 1.4; text-decoration: none; box-shadow: 0 1px 3px rgba(5,97,129,0.07); }
         .video-knop:active, .canva-knop:active { transform: scale(0.98); }
         .video-knop.actief { background: #e8f6f7; border-color: #09b9bb; }
-        .niveau-badge { flex-shrink: 0; background: #09b9bb; color: #fff; width: 35px; text-align: center; border-radius: 6px; padding: 2px 7px; font-size: 0.8rem; }
+        .niveau-badge { flex-shrink: 0; background: #09b9bb; color: #fff; width: 35px; text-align: center; border-radius: 6px; padding-top: 5px 7px; font-size: 0.8rem; }
         .video-knop.actief .niveau-badge { background: #056181; color: #fff; }
 
         /* CANVA SECTIE */
@@ -601,7 +601,7 @@
             canvaItems.filter(v => v.thema === actiefCanvaThema).forEach(item => {
                 const rij = document.createElement('div');
                 rij.className = 'canva-rij';
-                const badge = item.sterren === '*-**-***' ? '' : item.sterren;
+                const badge = item.sterren === '*-**-***' ? 'Alles' : item.sterren;
                 const naam = item.naam.replace(/[\*]+/g, '').replace('*-**-***', '').trim();
                 const knop = document.createElement('a');
                 knop.className = 'canva-knop';
