@@ -601,8 +601,8 @@
             canvaItems.filter(v => v.thema === actiefCanvaThema).forEach(item => {
                 const rij = document.createElement('div');
                 rij.className = 'canva-rij';
-                const badge = item.sterren === '*-**-***' ? '✦' : item.sterren;
-                const naam = item.naam.replace(/[\*]+/g, '').replace('*-**-***', '✪').trim();
+                const badge = item.sterren === '*-**-***' ? '' : item.sterren;
+                const naam = item.naam.replace(/[\*]+/g, '').replace('*-**-***', '').trim();
                 const knop = document.createElement('a');
                 knop.className = 'canva-knop';
                 knop.href = item.url;
