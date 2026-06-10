@@ -60,7 +60,7 @@
 
     <div id="hoofd-tabs">
         <button class="hoofd-tab actief" id="tab-video" onclick="toonSectie('video')">▶ Video&#39;s</button>
-        <button class="hoofd-tab" id="tab-canva" onclick="toonSectie('canva')">📋 Canva</button>
+        <button class="hoofd-tab" id="tab-canva" onclick="toonSectie('canva')">Canva</button>
         <button class="hoofd-tab" id="tab-fullscreen" onclick="zetVolledigScherm()">⛶ Volledig scherm</button>
     </div>
 
@@ -602,7 +602,7 @@
                 const rij = document.createElement('div');
                 rij.className = 'canva-rij';
                 const badge = item.sterren === '*-**-***' ? '✦' : item.sterren;
-                const naam = item.naam.replace(/[\*]+/g, '').replace('*-**-***', '').trim();
+                const naam = item.naam.replace(/[\*]+/g, '').replace('*-**-***', '✪').trim();
                 const knop = document.createElement('a');
                 knop.className = 'canva-knop';
                 knop.href = item.url;
