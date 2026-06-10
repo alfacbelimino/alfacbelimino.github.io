@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>E-learnings</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Georgia, serif; background: #f4f6f7; color: #1a3a4a; min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* === IFRAME CONTAINER === */
+        #elearning-container { width: 100%; background: #000; display: none; }
+        #elearning-title-balk { display: flex; align-items: center; justify-content: space-between; background: #056181; padding: 10px 14px; border-bottom: 1px solid #09b9bb; gap: 10px; }
+        #elearning-title { font-size: 0.9rem; flex: 1; color: #ffffff; }
+        #deel-knop { flex-shrink: 0; background: #e06025; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-family: Georgia, serif; font-size: 0.8rem; cursor: pointer; }
+        #deel-knop:active { background: #09b9bb; }
+        #elearning-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; }
+        #elearning-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+        #elearning-wrapper:-webkit-full-screen { padding-bottom: 0; width: 100vw; height: 100vh; }
+        #elearning-wrapper:-moz-full-screen { padding-bottom: 0; width: 100vw; height: 100vh; }
+        #elearning-wrapper:fullscreen { padding-bottom: 0; width: 100vw; height: 100vh; }
+        #elearning-wrapper:fullscreen iframe { height: 100%; }
+        #elearning-wrapper:-webkit-full-screen iframe { height: 100%; }
+
+        #elearning-knoppen-balk { display: none; flex-direction: row; }
+        #fullscreen-knop { flex: 1; padding: 12px 14px; background: #f0f8f8; border: none; color: #056181; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; border-top: 2px solid #09b9bb; border-left: 1px solid #09b9bb; letter-spacing: 0.04em; transition: background 0.2s; }
+        #fullscreen-knop:active { background: #056181; color: #fff; }
+        #minimize-knop { flex: 1; padding: 12px 14px; background: #f0f8f8; border: none; color: #056181; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; border-top: 2px solid #09b9bb; border-left: 1px solid #09b9bb; letter-spacing: 0.04em; transition: background 0.2s; }
+        #minimize-knop:active { background: #d0eaec; }
+
+        /* === WELKOM === */
+        #welkom { padding: 28px 16px; text-align: center; color: #056181; background: #ffffff; border-bottom: 2px solid #09b9bb; }
+        #welkom .icoon { font-size: 2.5rem; margin-bottom: 12px; }
+        #welkom p { font-size: 0.95rem; line-height: 1.6; color: #4a6a7a; }
+
+        /* === NIVEAU TABS (A / B) === */
+        #niveau-tabs { display: flex; background: #056181; border-bottom: 3px solid #09b9bb; }
+        .niveau-tab { flex: 1; padding: 13px 10px; background: none; border: none; color: rgba(255,255,255,0.65); font-family: Georgia, serif; font-size: 1rem; font-weight: bold; cursor: pointer; letter-spacing: 0.06em; transition: color 0.2s, background 0.2s; }
+        .niveau-tab.actief { color: #ffffff; background: rgba(9,185,187,0.25); border-bottom: 3px solid #09b9bb; margin-bottom: -3px; }
+
+        /* === THEMA TABS === */
+        #thema-tabs { display: flex; overflow-x: auto; background: #ffffff; border-bottom: 2px solid #09b9bb; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        #thema-tabs::-webkit-scrollbar { display: none; }
+        .thema-tab { flex-shrink: 0; padding: 10px 14px; background: none; border: none; color: #6a8a9a; font-family: Georgia, serif; font-size: 0.82rem; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: color 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; }
+        .thema-tab.actief { color: #056181; border-bottom-color: #09b9bb; font-weight: bold; }
+
+        /* === KNOPPEN === */
+        #knoppen-sectie { padding: 14px; flex: 1; background: #f4f6f7; }
+
+        .elearning-knop { display: flex; align-items: center; width: 100%; padding: 14px 16px; margin-bottom: 10px; background: #ffffff; border: 2px solid #d0e8ec; border-radius: 10px; color: #1a3a4a; font-size: 0.95rem; font-family: Georgia, serif; text-align: left; cursor: pointer; gap: 12px; transition: background 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; line-height: 1.4; box-shadow: 0 1px 3px rgba(5,97,129,0.07); }
+        .elearning-knop:active { transform: scale(0.98); }
+        .elearning-knop.actief { background: #e8f6f7; border-color: #09b9bb; }
+
+        .niveau-badge { flex-shrink: 0; background: #09b9bb; color: #fff; border-radius: 6px; padding: 2px 8px; font-size: 0.8rem; font-weight: bold; letter-spacing: 0.05em; }
+        .elearning-knop.actief .niveau-badge { background: #056181; }
+
+        /* leeg thema */
+        .leeg-melding { padding: 24px 16px; color: #8aabba; font-size: 0.9rem; text-align: center; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div id="welkom"><div class="icoon">📖</div><p>Kies een e-learning.</p></div>
+
+<div id="elearning-container">
+    <div id="elearning-title-balk">
+        <span id="elearning-title"></span>
+        <button id="deel-knop" onclick="deelElearning()">🔗 Deel</button>
+    </div>
+    <div id="elearning-knoppen-balk">
+        <button id="fullscreen-knop" onclick="zetVolledigScherm()">⛶ Volledig scherm</button>
+        <button id="minimize-knop" onclick="verbergElearning()">✕ Verberg</button>
+    </div>
+    <div id="elearning-wrapper">
+        <iframe id="genially-iframe" src="" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
+    </div>
+</div>
+
+<div id="nav-sectie">
+    <div id="niveau-tabs"></div>
+    <div id="thema-tabs"></div>
+    <div id="knoppen-sectie"></div>
+</div>
+
+<script>
+// =============================================
+// DATA
+// Structuur: { url, naam, thema, niveau }
+// niveau = 'A' of 'B'
+// thema  = 'Thema 01 - ...' t/m 'Thema 10 - ...'
+// =============================================
+
+const elearnings = [
+
+    // ── NIVEAU B ──────────────────────────────────────────────
+
+    // Thema 01 – Klinkers
+    { url: "https://view.genially.com/679202115f060dba205a9160",    naam: "B 1.1 – Stoel",              niveau: "B", thema: "Thema 01 – Klinkers" },
+    { url: "https://bit.ly/alfaacht",                                naam: "B 1.2 – Acht",               niveau: "B", thema: "Thema 01 – Klinkers" },
+
+    // Thema 02 – School
+    { url: "https://bit.ly/alfaschool",                              naam: "B 2.1 – School",             niveau: "B", thema: "Thema 02 – School" },
+    { url: "https://bit.ly/alfaboeken",                              naam: "B 2.2 – Boeken",             niveau: "B", thema: "Thema 02 – School" },
+
+    // Thema 03 – Keuken
+    { url: "https://view.genially.com/6846c36f42c6b55d57e3c082",    naam: "B 3.1 – Saus",               niveau: "B", thema: "Thema 03 – Keuken" },
+    { url: "https://view.genially.com/684e827579c9ab0412e207b2",    naam: "B 3.2 – Pannen",             niveau: "B", thema: "Thema 03 – Keuken" },
+
+    // Thema 04 – Gezondheid
+    { url: "https://view.genially.com/687cf946a61f239adb07022a",    naam: "B 4.1 – Dokter",             niveau: "B", thema: "Thema 04 – Gezondheid" },
+    { url: "https://view.genially.com/689080719e9dd883596a6c28",    naam: "B 4.2 – Kraan",              niveau: "B", thema: "Thema 04 – Gezondheid" },
+    { url: "https://view.genially.com/689289f948ce60789ddca1eb",    naam: "B 4.3 – Krant",              niveau: "B", thema: "Thema 04 – Gezondheid" },
+
+    // Thema 05 – Kledij & accessoires
+    { url: "https://view.genially.com/689e196ec4eaa4107650b070",    naam: "B 5.1 – Ring",               niveau: "B", thema: "Thema 05 – Kledij & accessoires" },
+    { url: "https://view.genially.com/68a0cdedfb5820693893ce55",    naam: "B 5.2 – Bril",               niveau: "B", thema: "Thema 05 – Kledij & accessoires" },
+
+    // Thema 06 – Wonen
+    { url: "https://view.genially.com/686bc1a722ba64214b2b8f75",    naam: "B 6.1 – Bank",               niveau: "B", thema: "Thema 06 – Wonen" },
+    { url: "https://view.genially.com/68b058d94fb8c980e77d117d",    naam: "B 6.2 – Bed",                niveau: "B", thema: "Thema 06 – Wonen" },
+    { url: "https://view.genially.com/688a1fb1fe8d4374b8c299c4",    naam: "B 6.3 – Peer / oor / deur",  niveau: "B", thema: "Thema 06 – Wonen" },
+
+    // Thema 07 – Vrije tijd
+    { url: "https://view.genially.com/6831cecffdfedf40058ebcdd",    naam: "B 7.1 – Voetbal",            niveau: "B", thema: "Thema 07 – Vrije tijd" },
+    { url: "https://view.genially.com/683454427f861f4b9de2dfa7",    naam: "B 7.2 – Haai / kooi / doei", niveau: "B", thema: "Thema 07 – Vrije tijd" },
+
+    // Thema 08 – Mobiliteit
+    { url: "https://view.genially.com/67dbd790cf928a1b7a981b07",    naam: "B 8.1 – Fiets",              niveau: "B", thema: "Thema 08 – Mobiliteit" },
+
+    // Thema 09 – (nog toe te voegen)
+    // Thema 10 – (nog toe te voegen)
+
+    // ── NIVEAU A ──────────────────────────────────────────────
+    // Voeg hier later A-e-learnings toe, zelfde structuur:
+    // { url: "https://...", naam: "A 1.1 – ...", niveau: "A", thema: "Thema 01 – ..." },
+
+];
+
+// Alle thema-namen per niveau (vaste volgorde, ook lege tonen)
+const themaVolgorde = {
+    A: [
+        "Thema 01 – Klinkers",
+        "Thema 02 – School",
+        "Thema 03 – Keuken",
+        "Thema 04 – Gezondheid",
+        "Thema 05 – Kledij & accessoires",
+        "Thema 06 – Wonen",
+        "Thema 07 – Vrije tijd",
+        "Thema 08 – Mobiliteit",
+        "Thema 09 – Thema 09",
+        "Thema 10 – Thema 10"
+    ],
+    B: [
+        "Thema 01 – Klinkers",
+        "Thema 02 – School",
+        "Thema 03 – Keuken",
+        "Thema 04 – Gezondheid",
+        "Thema 05 – Kledij & accessoires",
+        "Thema 06 – Wonen",
+        "Thema 07 – Vrije tijd",
+        "Thema 08 – Mobiliteit",
+        "Thema 09 – Thema 09",
+        "Thema 10 – Thema 10"
+    ]
+};
+
+let actiefNiveau = 'B';
+let actiefThema  = themaVolgorde['B'][0];
+
+// ── INIT ──────────────────────────────────────────────────────
+
+function init() {
+    bouwNiveauTabs();
+    bouwThemaTabs();
+    maakKnoppen();
+}
+
+function bouwNiveauTabs() {
+    const el = document.getElementById('niveau-tabs');
+    el.innerHTML = '';
+    ['A', 'B'].forEach(n => {
+        const btn = document.createElement('button');
+        btn.className = 'niveau-tab' + (n === actiefNiveau ? ' actief' : '');
+        btn.textContent = 'Niveau ' + n;
+        btn.addEventListener('click', () => selecteerNiveau(n));
+        el.appendChild(btn);
+    });
+}
+
+function bouwThemaTabs() {
+    const el = document.getElementById('thema-tabs');
+    el.innerHTML = '';
+    themaVolgorde[actiefNiveau].forEach(t => {
+        const btn = document.createElement('button');
+        btn.className = 'thema-tab' + (t === actiefThema ? ' actief' : '');
+        // Verkorte weergave: "T01 Klinkers"
+        const kort = t.replace('Thema ', 'T').replace(' – ', ' ');
+        btn.textContent = kort;
+        btn.addEventListener('click', () => selecteerThema(t));
+        el.appendChild(btn);
+    });
+}
+
+function selecteerNiveau(n) {
+    actiefNiveau = n;
+    actiefThema  = themaVolgorde[n][0];
+    bouwNiveauTabs();
+    bouwThemaTabs();
+    maakKnoppen();
+}
+
+function selecteerThema(t) {
+    actiefThema = t;
+    document.querySelectorAll('.thema-tab').forEach((b, i) => {
+        b.classList.toggle('actief', themaVolgorde[actiefNiveau][i] === t);
+    });
+    maakKnoppen();
+}
+
+function maakKnoppen() {
+    const sectie = document.getElementById('knoppen-sectie');
+    sectie.innerHTML = '';
+    const lijst = elearnings.filter(e => e.niveau === actiefNiveau && e.thema === actiefThema);
+    if (lijst.length === 0) {
+        sectie.innerHTML = '<p class="leeg-melding">Nog geen e-learnings beschikbaar voor dit thema.</p>';
+        return;
+    }
+    lijst.forEach(item => {
+        const knop = document.createElement('button');
+        knop.className = 'elearning-knop';
+        knop.innerHTML =
+            '<span class="niveau-badge">' + item.niveau + '</span>' +
+            '<span>' + item.naam + '</span>';
+        knop.addEventListener('click', () => openElearning(item, knop));
+        sectie.appendChild(knop);
+    });
+}
+
+// ── SPELER ────────────────────────────────────────────────────
+
+function openElearning(item, knop) {
+    document.getElementById('welkom').style.display = 'none';
+    document.getElementById('elearning-container').style.display = 'block';
+    document.getElementById('genially-iframe').src = item.url;
+    document.getElementById('elearning-title').textContent = item.naam;
+    document.querySelectorAll('.elearning-knop').forEach(b => b.classList.remove('actief'));
+    if (knop) knop.classList.add('actief');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('elearning-knoppen-balk').style.display = 'flex';
+}
+
+function verbergElearning() {
+    document.getElementById('elearning-container').style.display = 'none';
+    document.getElementById('welkom').style.display = 'block';
+    document.getElementById('genially-iframe').src = '';
+    document.querySelectorAll('.elearning-knop').forEach(b => b.classList.remove('actief'));
+}
+
+function zetVolledigScherm() {
+    const el = document.getElementById('elearning-wrapper');
+    if (el.requestFullscreen) el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+}
+
+// ── DELEN ─────────────────────────────────────────────────────
+// Genereert een directe link naar deze pagina met ?v=<encoded url>
+// Bij openen van zo'n link: nav verborgen, alleen e-learning zichtbaar.
+
+function deelElearning() {
+    const src = document.getElementById('genially-iframe').src;
+    if (!src) return;
+    const link = window.location.origin + window.location.pathname + '?v=' + encodeURIComponent(src);
+    navigator.clipboard.writeText(link).then(() => {
+        const knop = document.getElementById('deel-knop');
+        knop.textContent = '✓ Gekopieerd!';
+        setTimeout(() => knop.textContent = '🔗 Deel', 2000);
+    });
+}
+
+// ── DIRECTE LINK (?v=...) ─────────────────────────────────────
+
+const params    = new URLSearchParams(window.location.search);
+const directUrl = params.get('v');
+
+if (directUrl) {
+    // Verberg alles behalve de e-learning zelf
+    document.getElementById('welkom').style.display = 'none';
+    document.getElementById('nav-sectie').style.display = 'none';
+    document.getElementById('deel-knop').style.display = 'none';
+    document.getElementById('elearning-container').style.display = 'block';
+    document.getElementById('elearning-knoppen-balk').style.display = 'none';
+
+    const decodedUrl = decodeURIComponent(directUrl);
+    const item = elearnings.find(e => e.url === decodedUrl);
+    document.getElementById('elearning-title').textContent = item ? item.naam : '';
+    document.getElementById('genially-iframe').src = decodedUrl;
+} else {
+    document.getElementById('nav-sectie').style.display = 'block';
+    init();
+}
+</script>
+</body>
+</html>
