@@ -118,7 +118,7 @@
             videos.filter(v => v.groep === actiefGroep).forEach((video, i) => {
                 const knop = document.createElement('button');
                 knop.className = 'video-knop';
-                knop.innerHTML = '<span class="nummer">' + (i + 1) + '</span><span>' + video.naam + '</span>';
+                knop.innerHTML = '<span class="nummer">▶</span><span>' + video.naam + '</span>';
                 knop.addEventListener('click', () => speelAf(video, knop));
                 lijst.appendChild(knop);
             });
