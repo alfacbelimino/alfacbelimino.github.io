@@ -13,6 +13,7 @@
         #hoofd-tabs { display: flex; background: #056181; border-bottom: 3px solid #09b9bb; flex-shrink: 0; }
         .hoofd-tab { flex: 1; padding: 12px; background: none; border: none; color: rgba(255,255,255,0.6); font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -3px; transition: color 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; }
         .hoofd-tab.actief { color: #ffffff; border-bottom-color: #09b9bb; }
+        #tab-fullscreen { display: none; }
 
         /* VIDEO SECTIE */
         #video-sectie { display: flex; flex-direction: column; flex: 1; }
@@ -53,10 +54,6 @@
         .canva-rij { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
         .canva-knop { flex: 1; margin-bottom: 0; }
         .deel-knop-canva { flex-shrink: 0; background: #e06025; color: #fff; border: none; border-radius: 6px; padding: 8px 12px; font-family: Georgia, serif; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
-        #zoek-wrapper { flex-shrink: 0; display: flex; align-items: center; background: #056181; padding: 0 8px; border-left: 1px solid #09b9bb; }
-        #zoek-knop { background: none; border: none; color: #ffffff; font-size: 1.1rem; cursor: pointer; padding: 6px; line-height: 1; }
-        #zoek-input { display: none; width: 140px; padding: 5px 8px; border: none; border-radius: 6px; font-family: Georgia, serif; font-size: 0.82rem; background: #ffffff; color: #1a3a4a; outline: none; }
-        #zoek-input.open { display: block; }
 </style>
 </head>
 <body>
@@ -64,16 +61,20 @@
     <div id="hoofd-tabs">
         <button class="hoofd-tab actief" id="tab-video" onclick="toonSectie('video')">▶ Video&#39;s</button>
         <button class="hoofd-tab" id="tab-canva" onclick="toonSectie('canva')">📋 Canva</button>
+        <button class="hoofd-tab" id="tab-fullscreen" onclick="zetVolledigScherm()">⛶ Volledig scherm</button>
     </div>
 
     <!-- VIDEO SECTIE -->
     <div id="video-sectie">
         <div id="welkom"><div class="icoon">▶</div><p>Kies een thema en dan een video.</p></div>
         <div id="video-container">
-            <button id="fullscreen-knop" onclick="zetVolledigScherm()">&#x26F6; Volledig scherm</button>
             <div id="video-title-balk">
                 <span id="video-title"></span>
                 <button id="deel-knop" onclick="deelVideo()">🔗 Deel</button>
+            </div>
+            <div id="video-knoppen-balk">
+                <button id="fullscreen-knop" onclick="zetVolledigScherm()">⛶ Volledig scherm</button>
+                <button id="minimize-knop" onclick="verbergVideo()">✕ Verberg video</button>
             </div>
             <div id="video-wrapper">
                 <iframe id="youtube-iframe" src=""
@@ -532,6 +533,9 @@
             document.getElementById('welkom').style.display = 'none';
             document.getElementById('video-container').style.display = 'block';
             document.getElementById('video-knoppen-balk').style.display = 'flex';
+            document.getElementById('tab-fullscreen').style.display = 'block';
+            document.getElementById('tab-canva').style.display = 'none';
+            document.getElementById('hoofd-tabs').style.display = 'none';
             const src = 'https://www.youtube-nocookie.com/embed/' + video.id + '?autoplay=0&iv_load_policy=3&loop=0&modestbranding=1&rel=0';
             document.getElementById('youtube-iframe').src = src;
             document.getElementById('video-title').textContent = video.naam.replace(/\*+/, '').trim();
@@ -539,18 +543,22 @@
             if (knop) knop.classList.add('actief');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+        function verbergVideo() {
+            document.getElementById('video-container').style.display = 'none';
+            document.getElementById('welkom').style.display = 'block';
+            document.getElementById('youtube-iframe').src = '';
+            document.getElementById('video-knoppen-balk').style.display = 'none';
+            document.getElementById('tab-fullscreen').style.display = 'none';
+            document.getElementById('tab-canva').style.display = 'block';
+            document.querySelectorAll('.video-knop').forEach(b => b.classList.remove('actief'));
+            document.getElementById('hoofd-tabs').style.display = 'flex';
+        }
 
         function zetVolledigScherm() {
             const el = document.getElementById('video-wrapper');
             if (el.requestFullscreen) el.requestFullscreen();
             else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
             else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
-        }
-        function verbergVideo() {
-            document.getElementById('video-container').style.display = 'none';
-            document.getElementById('welkom').style.display = 'block';
-            document.getElementById('youtube-iframe').src = '';
-            document.querySelectorAll('.video-knop').forEach(b => b.classList.remove('actief'));
         }
 
         function deelVideo() {
