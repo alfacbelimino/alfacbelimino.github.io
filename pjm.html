@@ -23,7 +23,7 @@
         #video-wrapper:fullscreen iframe { height: 100%; }
         #video-wrapper:-webkit-full-screen iframe { height: 100%; }
 
-        <!-- #sluit-fullscreen-knop {
+        #sluit-fullscreen-knop {
             display: none;
             position: absolute;
             top: 12px; right: 12px;
@@ -37,9 +37,9 @@
             font-size: 1rem;
             cursor: pointer;
             backdrop-filter: blur(2px);
-        } -->
-         #video-wrapper:fullscreen #sluit-fullscreen-knop { display: block; }
-         #video-wrapper:-webkit-full-screen #sluit-fullscreen-knop { display: block; }
+        }
+        #video-wrapper:fullscreen #sluit-fullscreen-knop { display: block; }
+        #video-wrapper:-webkit-full-screen #sluit-fullscreen-knop { display: block; }
 
         #video-knoppen-balk { display: none; flex-direction: row; }
         #fullscreen-knop { flex: 1; padding: 12px 14px; background: #09b9bb; border: none; color: #fff; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; border-top: 2px solid #056181; letter-spacing: 0.04em; transition: background 0.2s; }
@@ -82,12 +82,12 @@
         </div>
         <div id="video-knoppen-balk">
             <button id="fullscreen-knop" onclick="zetVolledigScherm()">⛶ Volledig scherm</button>
-            <button id="minimize-knop" onclick="verbergVideo()">✕</button>
+            <button id="minimize-knop" onclick="verbergVideo()">✕ Verberg video</button>
         </div>
-        <!-- <div id="video-wrapper">
-            <button id="sluit-fullscreen-knop" onclick="sluitVolledigScherm()">✕</button>
+        <div id="video-wrapper">
+            <button id="sluit-fullscreen-knop" onclick="sluitVolledigScherm()">✕ Volledig scherm sluiten</button>
             <iframe id="youtube-iframe" src="" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>-->
+        </div>
         
     </div>
     <div id="nav-sectie">
