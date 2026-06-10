@@ -7,31 +7,32 @@
     <title>Audiofragmenten</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Georgia, serif; background: #1a1a2e; color: #f0f0f0; min-height: 100vh; display: flex; flex-direction: column; }
+        body { font-family: Georgia, serif; background: #f4f6f7; color: #1a3a4a; min-height: 100vh; display: flex; flex-direction: column; }
 
         #player-container { display: none; background: #000; width: 100%; }
-        #player-balk { display: flex; align-items: center; justify-content: space-between; background: #16213e; padding: 10px 14px; border-bottom: 1px solid #0f3460; gap: 10px; }
-        #player-titel { font-size: 0.9rem; flex: 1; }
-        #deel-knop { flex-shrink: 0; background: #e94560; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-family: Georgia, serif; font-size: 0.8rem; cursor: pointer; }
+        #player-balk { display: flex; align-items: center; justify-content: space-between; background: #056181; padding: 10px 14px; border-bottom: 1px solid #09b9bb; gap: 10px; }
+        #player-titel { font-size: 0.9rem; flex: 1; color: #ffffff; }
+        #deel-knop { flex-shrink: 0; background: #e06025; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-family: Georgia, serif; font-size: 0.8rem; cursor: pointer; }
+        #deel-knop:active { background: #09b9bb; }
         #soundcloud-iframe { width: 100%; height: 166px; border: none; display: block; }
 
-        #filter-balk { padding: 12px 14px; background: #16213e; border-bottom: 2px solid #0f3460; display: flex; gap: 8px; flex-wrap: wrap; }
-        .filter-knop { padding: 7px 14px; background: #0f3460; color: #a0a0b0; border: 2px solid #0f3460; border-radius: 20px; font-family: Georgia, serif; font-size: 0.82rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
-        .filter-knop.actief { background: #e94560; color: #fff; border-color: #e94560; }
+        #filter-balk { padding: 12px 14px; background: #ffffff; border-bottom: 2px solid #09b9bb; display: flex; gap: 8px; flex-wrap: wrap; }
+        .filter-knop { padding: 7px 14px; background: #f0f8f8; color: #056181; border: 2px solid #d0e8ec; border-radius: 20px; font-family: Georgia, serif; font-size: 0.82rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
+        .filter-knop.actief { background: #09b9bb; color: #fff; border-color: #09b9bb; }
 
-        #welkom { padding: 28px 16px; text-align: center; color: #a0a0b0; }
+        #welkom { padding: 28px 16px; text-align: center; color: #056181; background: #ffffff; border-bottom: 2px solid #09b9bb; }
         #welkom .icoon { font-size: 2.5rem; margin-bottom: 12px; }
-        #welkom p { font-size: 0.95rem; line-height: 1.6; }
+        #welkom p { font-size: 0.95rem; line-height: 1.6; color: #4a6a7a; }
 
-        #knoppen-sectie { padding: 14px; flex: 1; }
-        #aantal-label { font-size: 0.8rem; color: #a0a0b0; margin-bottom: 10px; }
-        .audio-knop { display: flex; align-items: center; width: 100%; padding: 14px 16px; margin-bottom: 10px; background: #16213e; border: 2px solid #0f3460; border-radius: 10px; color: #f0f0f0; font-size: 0.9rem; font-family: Georgia, serif; text-align: left; cursor: pointer; gap: 12px; transition: background 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; line-height: 1.4; }
+        #knoppen-sectie { padding: 14px; flex: 1; background: #f4f6f7; }
+        #aantal-label { font-size: 0.8rem; color: #6a8a9a; margin-bottom: 10px; }
+        .audio-knop { display: flex; align-items: center; width: 100%; padding: 14px 16px; margin-bottom: 10px; background: #ffffff; border: 2px solid #d0e8ec; border-radius: 10px; color: #1a3a4a; font-size: 0.9rem; font-family: Georgia, serif; text-align: left; cursor: pointer; gap: 12px; transition: background 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; line-height: 1.4; box-shadow: 0 1px 3px rgba(5,97,129,0.07); }
         .audio-knop:active { transform: scale(0.98); }
-        .audio-knop.actief { background: #0f3460; border-color: #e94560; }
-        .niveau-badge { flex-shrink: 0; background: #0f3460; color: #a0c4ff; border-radius: 6px; padding: 2px 7px; font-size: 0.75rem; white-space: nowrap; }
-        .audio-knop.actief .niveau-badge { background: #e94560; color: #fff; }
-        .speel-icoon { flex-shrink: 0; color: #e94560; font-size: 1.1rem; }
-        .audio-knop.actief .speel-icoon { color: #fff; }
+        .audio-knop.actief { background: #e8f6f7; border-color: #09b9bb; }
+        .niveau-badge { flex-shrink: 0; background: #e8f6f7; color: #056181; border-radius: 6px; padding: 2px 7px; font-size: 0.75rem; white-space: nowrap; }
+        .audio-knop.actief .niveau-badge { background: #09b9bb; color: #fff; }
+        .speel-icoon { flex-shrink: 0; color: #09b9bb; font-size: 1.1rem; }
+        .audio-knop.actief .speel-icoon { color: #056181; }
 </style>
 </head>
 <body>
