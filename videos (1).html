@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Oefenvideo's</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Georgia, serif; background: #f4f6f7; color: #1a3a4a; min-height: 100vh; display: flex; flex-direction: column; }
+
+        #video-container { width: 100%; background: #000; display: none; }
+        #video-title-balk { display: flex; align-items: center; justify-content: space-between; background: #056181; padding: 10px 14px; border-bottom: 1px solid #09b9bb; gap: 10px; }
+        #video-title { font-size: 0.9rem; flex: 1; color: #ffffff; }
+        #deel-knop { flex-shrink: 0; background: #e06025; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-family: Georgia, serif; font-size: 0.8rem; cursor: pointer; }
+        #deel-knop:active { background: #09b9bb; }
+        #video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; }
+        #video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+        #video-knoppen-balk { display: none; flex-direction: row; }
+        #fullscreen-knop { flex: 1; padding: 12px 14px; background: #f0f8f8; border: none; color: #056181; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; border-top: 2px solid #09b9bb; letter-spacing: 0.04em; transition: background 0.2s; }
+        #fullscreen-knop:active { background: #056181; color: #fff; }
+        #minimize-knop { flex: 1; padding: 12px 14px; background: #f0f8f8; border: none; color: #056181; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; border-top: 2px solid #09b9bb; border-left: 1px solid #09b9bb; letter-spacing: 0.04em; transition: background 0.2s; }
+        #minimize-knop:active { background: #d0eaec; }
+
+        #welkom { padding: 28px 16px; text-align: center; color: #056181; background: #ffffff; border-bottom: 2px solid #09b9bb; }
+        #welkom .icoon { font-size: 2.5rem; margin-bottom: 12px; }
+        #welkom p { font-size: 0.95rem; line-height: 1.6; color: #4a6a7a; }
+
+        #knoppen-sectie { padding: 14px; flex: 1; background: #f4f6f7; }
+        #aantal-label { font-size: 0.8rem; color: #6a8a9a; margin-bottom: 10px; }
+        #filter-balk { padding: 12px 14px; background: #ffffff; border-bottom: 2px solid #09b9bb; flex-wrap: wrap; }
+        #filter-balk select { width: 100%; padding: 10px 12px; background: #ffffff; color: #1a3a4a; border: 2px solid #09b9bb; border-radius: 8px; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; }
+
+        .video-knop { display: flex; align-items: center; width: 100%; padding: 14px 16px; margin-bottom: 10px; background: #ffffff; border: 2px solid #d0e8ec; border-radius: 10px; color: #1a3a4a; font-size: 0.95rem; font-family: Georgia, serif; text-align: left; cursor: pointer; gap: 12px; transition: background 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; line-height: 1.4; box-shadow: 0 1px 3px rgba(5,97,129,0.07); }
+        .video-knop:active { transform: scale(0.98); }
+        .video-knop.actief { background: #e8f6f7; border-color: #09b9bb; }
+        .thema-badge { flex-shrink: 0; background: #e8f6f7; color: #056181; border-radius: 6px; padding: 2px 7px; font-size: 0.75rem; white-space: nowrap; }
+        .video-knop.actief .thema-badge { background: #09b9bb; color: #fff; }
+
+        #zoek-wrapper { flex-shrink: 0; display: flex; align-items: center; margin-left: auto; margin-top: 8px; }
+        #zoek-knop { background: #e8f6f7; border: 1px solid #09b9bb; color: #056181; border-radius: 6px; padding: 3px 8px; font-size: 0.82rem; cursor: pointer; }
+        #zoek-knop:active { background: #09b9bb; color: #fff; }
+        #zoek-input { display: none; width: 130px; padding: 4px 8px; border: 1px solid #09b9bb; border-radius: 6px; font-family: Georgia, serif; font-size: 0.82rem; background: #ffffff; color: #1a3a4a; outline: none; margin-right: 6px; }
+        #zoek-input.open { display: block; }
+    </style>
+</head>
+<body>
+    <div id="welkom"><div class="icoon">▶</div><p>Kies een video.</p></div>
+
+    <div id="video-container">
+        <div id="video-title-balk">
+            <span id="video-title"></span>
+            <button id="deel-knop" onclick="deelVideo()">🔗 Deel</button>
+        </div>
+        <div id="video-knoppen-balk">
+            <button id="fullscreen-knop" onclick="zetVolledigScherm()">⛶ Volledig scherm</button>
+            <button id="minimize-knop" onclick="verbergVideo()">✕ Verberg video</button>
+        </div>
+        <div id="video-wrapper"><iframe id="youtube-iframe" src="" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+    </div>
+
+    <div id="nav-sectie">
+        <div id="filter-balk">
+            <select id="thema-filter" onchange="filterThema()">
+                <option value="">— Alle thema's (48 video's) —</option>
+                <option value="OCMW">OCMW</option>
+                <option value="VDAB">VDAB</option>
+                <option value="Gezondheid">Gezondheid</option>
+                <option value="School">School</option>
+                <option value="Wonen">Wonen</option>
+                <option value="Werk">Werk</option>
+                <option value="Winkel">Winkel</option>
+                <option value="Verkeer">Verkeer</option>
+                <option value="Vrije tijd">Vrije tijd</option>
+                <option value="Documenten">Documenten</option>
+            </select>
+            <div id="zoek-wrapper">
+                <input id="zoek-input" type="text" placeholder="Zoeken..." oninput="zoekVideos(this.value)">
+                <button id="zoek-knop" onclick="toggleZoek()">Zoek</button>
+            </div>
+        </div>
+        <div id="knoppen-sectie">
+            <div id="aantal-label"></div>
+            <div id="knoppen-lijst"></div>
+        </div>
+    </div>
+
+    <script>
+        const videos = [
+    { id: "YBvgA2hsNDc", naam: "002 Nieuwe OCMW klant", thema: "OCMW" },
+    { id: "dRervnKpJ_M", naam: "003 Treinabonnement", thema: "Verkeer" },
+    { id: "aukOcFKCOCA", naam: "009 Inschrijven op school", thema: "School" },
+    { id: "93rKbVDjG_U", naam: "010 Naar het bos", thema: "Vrije tijd" },
+    { id: "0ppMicIIsNg", naam: "013a Formulier invullen", thema: "Documenten" },
+    { id: "vrROWDoOd7U", naam: "013b Instructies op de werkvloer", thema: "Werk" },
+    { id: "k9kw6pWhDNM", naam: "014 Nieuwe VDAB klant", thema: "VDAB" },
+    { id: "pFDcF4x25Ws", naam: "020 Klantenkaart", thema: "Winkel" },
+    { id: "FEInlEhajMw", naam: "021 Verkeersboete", thema: "Verkeer" },
+    { id: "27xQFonQZho", naam: "025a In de wachtzaal", thema: "Gezondheid" },
+    { id: "X-ql2LZEdto", naam: "025b Een doktersbezoek", thema: "Gezondheid" },
+    { id: "Zz8pbEeqJEM", naam: "033 Antwoordapparaat OCMW", thema: "OCMW" },
+    { id: "XaPKctJ8V38", naam: "035 Afspraak OCMW", thema: "OCMW" },
+    { id: "23HOc7vaTYA", naam: "036 Een treinticket kopen", thema: "Verkeer" },
+    { id: "avHdKc4UtiU", naam: "044a Wachten in de gang", thema: "School" },
+    { id: "UtJ19T518ls", naam: "044b Oudercontact", thema: "School" },
+    { id: "fxR2DUpULhw", naam: "048 Uitnodiging van VDAB", thema: "VDAB" },
+    { id: "6Paif_ZV84o", naam: "049 Te vroeg op VDAB afspraak", thema: "VDAB" },
+    { id: "OSL7AcXhGLQ", naam: "054 Sluitingstijd", thema: "Winkel" },
+    { id: "BYLIPxvox48", naam: "055a Online bestelling lukt niet", thema: "Winkel" },
+    { id: "mtqP3YmxCC4", naam: "055b Meubelzaak", thema: "Winkel" },
+    { id: "sZko4ZkZ0Js", naam: "056 Kleren kopen", thema: "Winkel" },
+    { id: "pz_7YDQHj5E", naam: "058 Vuilniszakken", thema: "Wonen" },
+    { id: "NByWhgL8sUQ", naam: "059 Sorry ik kan niet", thema: "Documenten" },
+    { id: "Xd2WIEt46HM", naam: "063 Bij de apotheek", thema: "Gezondheid" },
+    { id: "n9tYrS8rtJY", naam: "064 Tandpijn", thema: "Gezondheid" },
+    { id: "P2KMVoNLSIM", naam: "074 Te laat", thema: "Werk" },
+    { id: "4LigzU-aeeQ", naam: "076a Op gesprek bij het OCMW", thema: "OCMW" },
+    { id: "0HbP-TQx3-4", naam: "076b Ik ben ziek", thema: "Gezondheid" },
+    { id: "qzIv5pPiYWw", naam: "079 Een strenge huisbaas", thema: "Wonen" },
+    { id: "jw8FVgNWo3U", naam: "084 Ik wil verhuizen", thema: "Wonen" },
+    { id: "hsyuD-LZjSQ", naam: "090 Afbellen school", thema: "School" },
+    { id: "ctza1XJ8fMA", naam: "091 Rommel in de keuken", thema: "Wonen" },
+    { id: "W8IdKGbiC4E", naam: "095 De eerste loonbrief", thema: "Werk" },
+    { id: "NNe67XDYdHM", naam: "096 Zieke collega", thema: "Werk" },
+    { id: "d2HlI7MZKco", naam: "097a Tweedehandsmarkt", thema: "Winkel" },
+    { id: "pVnDEDjbqb8", naam: "099b Stofzuiger kopen", thema: "Winkel" },
+    { id: "hjSYIhsQm68", naam: "100 Naar het restaurant", thema: "Vrije tijd" },
+    { id: "lVQERt7-jsw", naam: "101 Stofzuiger kapot", thema: "Wonen" },
+    { id: "_B0rMsyOPyk", naam: "106 Verloren ID-kaart", thema: "Documenten" },
+    { id: "6JDU-2uykuA", naam: "112 In de apotheek", thema: "Gezondheid" },
+    { id: "NhGTrzNatuM", naam: "122 Man is boos", thema: "Wonen" },
+    { id: "1ray5PAYWq8", naam: "125 Kapotte kraan", thema: "Wonen" },
+    { id: "6z9IBJ5QR0o", naam: "133a Praten over werk", thema: "Werk" },
+    { id: "ekfFMED_Er4", naam: "133b De vacature", thema: "Werk" },
+    { id: "Ka6EQNQZueY", naam: "134 Brief van VDAB", thema: "VDAB" },
+    { id: "IXWa_U5sfzc", naam: "135a Afwasser gezocht", thema: "Werk" },
+    { id: "2DjCwZVivu8", naam: "135b Rondleiding op de werkvloer", thema: "Werk" }
+        ];
+
+        let actiefThema = '';
+
+        function init() { maakKnoppen(); }
+
+        function filterThema() {
+            actiefThema = document.getElementById('thema-filter').value;
+            maakKnoppen();
+        }
+
+        function maakKnoppen() {
+            const lijst = document.getElementById('knoppen-lijst');
+            lijst.innerHTML = '';
+            const gefilterd = actiefThema ? videos.filter(v => v.thema === actiefThema) : videos;
+            document.getElementById('aantal-label').textContent = gefilterd.length + " video's";
+            gefilterd.forEach(video => {
+                const knop = document.createElement('button');
+                knop.className = 'video-knop';
+                knop.innerHTML = '<span class="thema-badge">' + video.thema + '</span><span>' + video.naam + '</span>';
+                knop.addEventListener('click', () => speelAf(video, knop));
+                lijst.appendChild(knop);
+            });
+        }
+
+        function speelAf(video, knop) {
+            document.getElementById('welkom').style.display = 'none';
+            document.getElementById('video-container').style.display = 'block';
+            const src = 'https://www.youtube-nocookie.com/embed/' + video.id + '?autoplay=0&iv_load_policy=3&loop=0&modestbranding=1&rel=0';
+            document.getElementById('youtube-iframe').src = src;
+            document.getElementById('video-title').textContent = video.naam;
+            document.querySelectorAll('.video-knop').forEach(b => b.classList.remove('actief'));
+            if (knop) knop.classList.add('actief');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('video-knoppen-balk').style.display = 'flex';
+        }
+
+        function zetVolledigScherm() {
+            const el = document.getElementById('video-wrapper');
+            if (el.requestFullscreen) el.requestFullscreen();
+            else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+            else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+        }
+
+        function verbergVideo() {
+            document.getElementById('video-container').style.display = 'none';
+            document.getElementById('welkom').style.display = 'block';
+            document.getElementById('youtube-iframe').src = '';
+            document.querySelectorAll('.video-knop').forEach(b => b.classList.remove('actief'));
+        }
+
+        function deelVideo() {
+            const iframe = document.getElementById('youtube-iframe');
+            const match = iframe.src.match(/embed\/([^?]+)/);
+            if (!match) return;
+            const link = window.location.origin + window.location.pathname + '?v=' + match[1];
+            navigator.clipboard.writeText(link).then(() => {
+                const knop = document.getElementById('deel-knop');
+                knop.textContent = '✓ Gekopieerd!';
+                setTimeout(() => knop.textContent = '🔗 Deel', 2000);
+            });
+        }
+
+        function toggleZoek() {
+            const input = document.getElementById('zoek-input');
+            input.classList.toggle('open');
+            if (input.classList.contains('open')) {
+                input.focus();
+            } else {
+                input.value = '';
+                zoekVideos('');
+            }
+        }
+
+        function zoekVideos(term) {
+            const zoekterm = term.trim().toLowerCase();
+            if (!zoekterm) { maakKnoppen(); return; }
+            const resultaten = videos.filter(v => v.naam.toLowerCase().includes(zoekterm));
+            const lijst = document.getElementById('knoppen-lijst');
+            lijst.innerHTML = '';
+            document.getElementById('aantal-label').textContent = resultaten.length + " video's";
+            resultaten.forEach(video => {
+                const knop = document.createElement('button');
+                knop.className = 'video-knop';
+                knop.innerHTML = '<span class="thema-badge">' + video.thema + '</span><span>' + video.naam + '</span>';
+                knop.addEventListener('click', () => speelAf(video, knop));
+                lijst.appendChild(knop);
+            });
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const directId = params.get('v');
+        if (directId) {
+            document.getElementById('welkom').style.display = 'none';
+            document.getElementById('nav-sectie').style.display = 'none';
+            document.getElementById('deel-knop').style.display = 'none';
+            document.getElementById('video-container').style.display = 'block';
+            const video = videos.find(v => v.id === directId);
+            const naam = video ? video.naam : directId;
+            const src = 'https://www.youtube-nocookie.com/embed/' + directId + '?autoplay=0&iv_load_policy=3&loop=0&modestbranding=1&rel=0';
+            document.getElementById('youtube-iframe').src = src;
+            document.getElementById('video-title').textContent = naam;
+        } else {
+            document.getElementById('nav-sectie').style.display = 'block';
+            init();
+        }
+    </script>
+</body>
+</html>
