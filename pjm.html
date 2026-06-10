@@ -42,7 +42,7 @@
         #video-wrapper:-webkit-full-screen #sluit-fullscreen-knop { display: block; }
 
         #video-knoppen-balk { display: none; flex-direction: row; }
-        #fullscreen-knop { flex: 1; padding: 12px 14px; background: #09b9bb; border: none; color: #fff; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; border-top: 2px solid #056181; letter-spacing: 0.04em; transition: background 0.2s; }
+        #fullscreen-knop { flex: 1; padding: 12px 14px; background: #f0f8f8; border: none; color: #056181; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; border-top: 2px solid #09b9bb; border-left: 1px solid #09b9bb; letter-spacing: 0.04em; transition: background 0.2s; }
         #fullscreen-knop:active { background: #056181; }
         #minimize-knop { flex: 1; padding: 12px 14px; background: #f0f8f8; border: none; color: #056181; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; border-top: 2px solid #09b9bb; border-left: 1px solid #09b9bb; letter-spacing: 0.04em; transition: background 0.2s; }
         #minimize-knop:active { background: #d0eaec; }
@@ -85,7 +85,6 @@
             <button id="minimize-knop" onclick="verbergVideo()">✕ Verberg video</button>
         </div>
         <div id="video-wrapper">
-            <button id="sluit-fullscreen-knop" onclick="sluitVolledigScherm()">✕ Volledig scherm sluiten</button>
             <iframe id="youtube-iframe" src="" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
         
