@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>PJM Oefenvideo's</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Georgia, serif; background: #f4f6f7; color: #1a3a4a; min-height: 100vh; display: flex; flex-direction: column; }
+
+        #video-container { width: 100%; background: #000; display: none; }
+        #video-title-balk { display: flex; align-items: center; justify-content: space-between; background: #056181; padding: 10px 14px; border-bottom: 1px solid #09b9bb; gap: 10px; }
+        #video-title { font-size: 0.9rem; flex: 1; color: #ffffff; }
+        #deel-knop { flex-shrink: 0; background: #e06025; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-family: Georgia, serif; font-size: 0.8rem; cursor: pointer; }
+        #deel-knop:active { background: #09b9bb; }
+        #video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; }
+        #video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+        #video-wrapper:-webkit-full-screen { padding-bottom: 0; width: 100vw; height: 100vh; }
+        #video-wrapper:-moz-full-screen { padding-bottom: 0; width: 100vw; height: 100vh; }
+        #video-wrapper:fullscreen { padding-bottom: 0; width: 100vw; height: 100vh; }
+        #video-wrapper:fullscreen iframe { height: 100%; }
+        #video-wrapper:-webkit-full-screen iframe { height: 100%; }
+
+        #sluit-fullscreen-knop {
+            display: none;
+            position: absolute;
+            top: 12px; right: 12px;
+            z-index: 9999;
+            background: rgba(5, 97, 129, 0.85);
+            color: #fff;
+            border: 2px solid #09b9bb;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-family: Georgia, serif;
+            font-size: 1rem;
+            cursor: pointer;
+            backdrop-filter: blur(2px);
+        }
+        #video-wrapper:fullscreen #sluit-fullscreen-knop { display: block; }
+        #video-wrapper:-webkit-full-screen #sluit-fullscreen-knop { display: block; }
+
+        #video-knoppen-balk { display: none; flex-direction: row; }
+        #fullscreen-knop { flex: 1; padding: 12px 14px; background: #f0f8f8; border: none; color: #056181; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; border-top: 2px solid #09b9bb; border-left: 1px solid #09b9bb; letter-spacing: 0.04em; transition: background 0.2s; }
+        #fullscreen-knop:active { background: #056181; }
+        #minimize-knop { flex: 1; padding: 12px 14px; background: #f0f8f8; border: none; color: #056181; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; border-top: 2px solid #09b9bb; border-left: 1px solid #09b9bb; letter-spacing: 0.04em; transition: background 0.2s; }
+        #minimize-knop:active { background: #d0eaec; }
+
+        #welkom { padding: 28px 16px; text-align: center; color: #056181; background: #ffffff; border-bottom: 2px solid #09b9bb; }
+        #welkom .icoon { font-size: 2.5rem; margin-bottom: 12px; }
+        #welkom p { font-size: 0.95rem; line-height: 1.6; color: #4a6a7a; }
+
+        #thema-tabs { display: flex; overflow-x: auto; background: #ffffff; border-bottom: 2px solid #09b9bb; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        #thema-tabs::-webkit-scrollbar { display: none; }
+        .thema-tab { flex-shrink: 0; padding: 10px 14px; background: none; border: none; color: #6a8a9a; font-family: Georgia, serif; font-size: 0.82rem; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: color 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; }
+        .thema-tab.actief { color: #056181; border-bottom-color: #09b9bb; font-weight: bold; }
+
+        #knoppen-sectie { padding: 14px; flex: 1; background: #f4f6f7; }
+        #aantal-label { font-size: 0.8rem; color: #6a8a9a; margin-bottom: 10px; }
+        #filter-balk { padding: 12px 14px; background: #ffffff; border-bottom: 2px solid #09b9bb; }
+        #filter-balk select { width: 100%; padding: 10px 12px; background: #ffffff; color: #1a3a4a; border: 2px solid #09b9bb; border-radius: 8px; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; }
+
+        .video-knop { display: flex; align-items: center; width: 100%; padding: 14px 16px; margin-bottom: 10px; background: #ffffff; border: 2px solid #d0e8ec; border-radius: 10px; color: #1a3a4a; font-size: 0.95rem; font-family: Georgia, serif; text-align: left; cursor: pointer; gap: 12px; transition: background 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; line-height: 1.4; box-shadow: 0 1px 3px rgba(5,97,129,0.07); }
+        .video-knop:active { transform: scale(0.98); }
+        .video-knop.actief { background: #e8f6f7; border-color: #09b9bb; }
+        .niveau-badge { flex-shrink: 0; background: #09b9bb; color: #fff; border-radius: 6px; padding: 2px 7px; font-size: 0.8rem; }
+        .video-knop.actief .niveau-badge { background: #056181; color: #fff; }
+        .thema-badge { flex-shrink: 0; background: #e8f6f7; color: #056181; border-radius: 6px; padding: 2px 7px; font-size: 0.75rem; white-space: nowrap; }
+        .video-knop.actief .thema-badge { background: #09b9bb; color: #fff; }
+        .nummer { flex-shrink: 0; background: #09b9bb; color: #fff; border-radius: 50%; width: 28px; height: 28px; line-height: 28px; text-align: center; font-size: 0.8rem; }
+        .video-knop.actief .nummer { background: #056181; color: #fff; }
+</style>
+</head>
+<body>
+    <div id="welkom"><div class="icoon">▶</div><p>Kies een video.</p></div>
+    
+    <div id="video-container">
+        <div id="video-title-balk">
+            <span id="video-title"></span>
+            <button id="deel-knop" onclick="deelVideo()">🔗 Deel</button>
+        </div>
+        <div id="video-knoppen-balk">
+            <button id="fullscreen-knop" onclick="zetVolledigScherm()">⛶ Volledig scherm</button>
+            <button id="minimize-knop" onclick="verbergVideo()">✕ Verberg video</button>
+        </div>
+        <div id="video-wrapper">
+            <iframe id="youtube-iframe" src="" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        
+    </div>
+    <div id="nav-sectie">
+        <div id="thema-tabs"></div>
+        <div id="knoppen-sectie"></div>
+    </div>
+    <script>
+        const videos = [
+    { id: "oEDsDnXPORc", naam: "1 .1 - Zich voorstellen*", thema: "Thema 01 - Kennismaken" },
+    { id: "04TQxMHEKf0", naam: "1 .1 - Zich voorstellen**", thema: "Thema 01 - Kennismaken" },
+    { id: "_s2U4XOJUFU", naam: "1 .1 - Zich voorstellen***", thema: "Thema 01 - Kennismaken" },
+    { id: "7UQzrh4gJ3k", naam: "1 .2 - Bedanken en afscheid nemen*", thema: "Thema 01 - Kennismaken" },
+    { id: "L5-eJ3rAWaQ", naam: "1 .2 - Bedanken en afscheid nemen**", thema: "Thema 01 - Kennismaken" },
+    { id: "TEF9eN5RP_w", naam: "1 .2 - Bedanken en afscheid nemen***", thema: "Thema 01 - Kennismaken" },
+    { id: "3IlQZ67ir24", naam: "1 .3 - Groeten en vragen hoe het gaat*", thema: "Thema 01 - Kennismaken" },
+    { id: "_I_DFW-lYb4", naam: "1 .3 - Groeten en vragen hoe het gaat**", thema: "Thema 01 - Kennismaken" },
+    { id: "CbPuI1JqCOI", naam: "1 .3 - Groeten en vragen hoe het gaat***", thema: "Thema 01 - Kennismaken" },
+    { id: "Ufg5EyHc6Wo", naam: "1 .4 - Vertellen over het gezin*", thema: "Thema 01 - Kennismaken" },
+    { id: "MVT5coFwJCQ", naam: "1 .4 - Vertellen over het gezin**", thema: "Thema 01 - Kennismaken" },
+    { id: "6kG9nbvJAiQ", naam: "1 .4 - Vertellen over het gezin***", thema: "Thema 01 - Kennismaken" },
+    { id: "9gpN-q_xFDs", naam: "1 .5 - Vertellen over het verblijf in België*", thema: "Thema 01 - Kennismaken" },
+    { id: "u67gLDD4YlI", naam: "1 .5 - Vertellen over het verblijf in België**", thema: "Thema 01 - Kennismaken" },
+    { id: "doZLjRIHLFY", naam: "1 .5 - Vertellen over het verblijf in België***", thema: "Thema 01 - Kennismaken" },
+    { id: "8Ac7-uHzCFs", naam: "1 .6 - De eigen gegevens zeggen*", thema: "Thema 01 - Kennismaken" },
+    { id: "ARL0U-IdKMs", naam: "1 .6 - De eigen gegevens zeggen**", thema: "Thema 01 - Kennismaken" },
+    { id: "U5J9OsJkuL4", naam: "1 .6 - De eigen gegevens zeggen***", thema: "Thema 01 - Kennismaken" },
+    { id: "jukKVxB7LbA", naam: "2 .1 - Regels in de klas*", thema: "Thema 02 - School" },
+    { id: "9hgD-CjWGUI", naam: "2 .1 - Regels in de klas**", thema: "Thema 02 - School" },
+    { id: "-Quj5nKXwLU", naam: "2 .1 - Regels in de klas***", thema: "Thema 02 - School" },
+    { id: "asPJyh84qg4", naam: "2 .2 - Huiswerk*", thema: "Thema 02 - School" },
+    { id: "Eiv7rUWeoUM", naam: "2 .2 - Huiswerk**", thema: "Thema 02 - School" },
+    { id: "ejUmhBykeOQ", naam: "2 .2 - Huiswerk***", thema: "Thema 02 - School" },
+    { id: "QTjLaCQ0-SM", naam: "2 .3 - Dingen vragen en geven*", thema: "Thema 02 - School" },
+    { id: "LxP_obZ7hBg", naam: "2 .3 - Dingen vragen en geven**", thema: "Thema 02 - School" },
+    { id: "MKZ4ZklceJ4", naam: "2 .3 - Dingen vragen en geven***", thema: "Thema 02 - School" },
+    { id: "leUF1s19H2k", naam: "2 .4 - Om hulp en verduidelijking vragen*", thema: "Thema 02 - School" },
+    { id: "EoLcMqYa-xk", naam: "2 .4 - Om hulp en verduidelijking vragen**", thema: "Thema 02 - School" },
+    { id: "f0d_O4zJVlY", naam: "2 .4 - Om hulp en verduidelijking vragen***", thema: "Thema 02 - School" },
+    { id: "vnyJh5Vom-k", naam: "2 .5 - Vertellen wat je op school doet*", thema: "Thema 02 - School" },
+    { id: "OxUSSXlEbuc", naam: "2 .5 - Vertellen wat je op school doet**", thema: "Thema 02 - School" },
+    { id: "8cwhFUGJYhA", naam: "2 .5 - Vertellen wat je op school doet***", thema: "Thema 02 - School" },
+    { id: "qCVCKowj6kg", naam: "2 .6 - Zich ziek melden*", thema: "Thema 02 - School" },
+    { id: "pqpYOZwaWaE", naam: "2 .6 - Zich ziek melden**", thema: "Thema 02 - School" },
+    { id: "5-aZLZIsoPo", naam: "2 .6 - Zich ziek melden***", thema: "Thema 02 - School" },
+    { id: "5-aZLZIsoPo", naam: "2 .7 - Klokkijken (1)*", thema: "Thema 02 - School" },
+    { id: "lnI_6EGASc0", naam: "2 .7 - Klokkijken (1)**", thema: "Thema 02 - School" },
+    { id: "dY_YyNa4xlk", naam: "3 .1 - Eten en drinken aanbieden*", thema: "Thema 03 - Eten en drinken" },
+    { id: "TWzLo-Gmijc", naam: "3 .1 - Eten en drinken aanbieden**", thema: "Thema 03 - Eten en drinken" },
+    { id: "pkT6w009AEo", naam: "3 .1 - Eten en drinken aanbieden***", thema: "Thema 03 - Eten en drinken" },
+    { id: "WHptnAC4Ueo", naam: "3 .2 - Iets bestellen in de kantine*", thema: "Thema 03 - Eten en drinken" },
+    { id: "2oUkxPWcR2c", naam: "3 .2 - Iets bestellen in de kantine**", thema: "Thema 03 - Eten en drinken" },
+    { id: "_aga_B4XEXA", naam: "3 .2 - Iets bestellen in de kantine***", thema: "Thema 03 - Eten en drinken" },
+    { id: "ZqRGtULyu7M", naam: "3 .3 - Toezeggen iets mee te nemen*", thema: "Thema 03 - Eten en drinken" },
+    { id: "idIHBPpt0JU", naam: "3 .3 - Toezeggen iets mee te nemen**", thema: "Thema 03 - Eten en drinken" },
+    { id: "hJKywXQk2UM", naam: "3 .3 - Toezeggen iets mee te nemen***", thema: "Thema 03 - Eten en drinken" },
+    { id: "-RAYOcD9szc", naam: "3 .4 - Iets vragen in de supermarkt*", thema: "Thema 03 - Eten en drinken" },
+    { id: "hYg5Nt6ZETg", naam: "3 .4 - Iets vragen in de supermarkt**", thema: "Thema 03 - Eten en drinken" },
+    { id: "nxMsYN5pJjI", naam: "3 .4 - Iets vragen in de supermarkt***", thema: "Thema 03 - Eten en drinken" },
+    { id: "L5dO164sUss", naam: "3 .5 - Zeggen wat je (niet) lekker vindt*", thema: "Thema 03 - Eten en drinken" },
+    { id: "E6O2HOBSzE8", naam: "3 .5 - Zeggen wat je (niet) lekker vindt**", thema: "Thema 03 - Eten en drinken" },
+    { id: "stGAaX0Di0Q", naam: "3 .5 - Zeggen wat je (niet) lekker vindt***", thema: "Thema 03 - Eten en drinken" },
+    { id: "BDmA-qmGRSo", naam: "3 .6 - Afrekenen in de winkel*", thema: "Thema 03 - Eten en drinken" },
+    { id: "LYufs579iwg", naam: "3 .6 - Afrekenen in de winkel**", thema: "Thema 03 - Eten en drinken" },
+    { id: "1G4eIcSwCqY", naam: "3 .6 - Afrekenen in de winkel***", thema: "Thema 03 - Eten en drinken" },
+    { id: "BE0_EUsKhto", naam: "3 .7 - Vragen hoeveel iets kost*", thema: "Thema 03 - Eten en drinken" },
+    { id: "Sd8tcU4MIOQ", naam: "3 .7 - Vragen hoeveel iets kost**", thema: "Thema 03 - Eten en drinken" },
+    { id: "uyBxNounTT4", naam: "3 .7 - Vragen hoeveel iets kost***", thema: "Thema 03 - Eten en drinken" },
+    { id: "ivlKrfD-a1w", naam: "4 .1 - Vertellen waar je last van hebt*", thema: "Thema 04 - Gezondheid" },
+    { id: "osGYIM5kjU4", naam: "4 .1 - Vertellen waar je last van hebt**", thema: "Thema 04 - Gezondheid" },
+    { id: "Hl201uSoFg4", naam: "4 .1 - Vertellen waar je last van hebt***", thema: "Thema 04 - Gezondheid" },
+    { id: "AC2yozYO7p0", naam: "4 .2 - Klokkijken (2)*", thema: "Thema 04 - Gezondheid" },
+    { id: "tg996DughLQ", naam: "4 .3 - Een afspraak maken*", thema: "Thema 04 - Gezondheid" },
+    { id: "xg43k3NP_vw", naam: "4 .3 - Een afspraak maken**", thema: "Thema 04 - Gezondheid" },
+    { id: "fJ6KwbMT8qw", naam: "4 .3 - Een afspraak maken***", thema: "Thema 04 - Gezondheid" },
+    { id: "fquGQtRZ7Yk", naam: "4 .4 - Bij de huisarts*", thema: "Thema 04 - Gezondheid" },
+    { id: "6b-wfTGwI3k", naam: "4 .4 - Bij de huisarts**", thema: "Thema 04 - Gezondheid" },
+    { id: "4Z6ui-5jyA0", naam: "4 .4 - Bij de huisarts***", thema: "Thema 04 - Gezondheid" },
+    { id: "EstVvLhsjDA", naam: "4 .5 - Bij de apotheek*", thema: "Thema 04 - Gezondheid" },
+    { id: "P4Gc96ttBic", naam: "4 .5 - Bij de apotheek**", thema: "Thema 04 - Gezondheid" },
+    { id: "3lcs1mRputw", naam: "4 .5 - Bij de apotheek***", thema: "Thema 04 - Gezondheid" },
+    { id: "HsDZ3oQmOcY", naam: "4 .6 - Bij de tandarts*", thema: "Thema 04 - Gezondheid" },
+    { id: "_YEpvlPZm50", naam: "4 .6 - Bij de tandarts**", thema: "Thema 04 - Gezondheid" },
+    { id: "-3cQFz32SGc", naam: "4 .6 - Bij de tandarts***", thema: "Thema 04 - Gezondheid" },
+    { id: "7PmwfC9WsWM", naam: "4 .7 - Naar het ziekenhuis**", thema: "Thema 04 - Gezondheid" },
+    { id: "658nqKUnoME", naam: "4 .7 - Naar het ziekenhuis***", thema: "Thema 04 - Gezondheid" },
+    { id: "R-Mdges7j3k", naam: "5 .1 - Een gesprek voeren in een winkel*", thema: "Thema 05 - Kleding" },
+    { id: "Nanq_jFP0Lw", naam: "5 .1 - Een gesprek voeren in een winkel**", thema: "Thema 05 - Kleding" },
+    { id: "gMZEgI_0pFs", naam: "5 .1 - Een gesprek voeren in een winkel***", thema: "Thema 05 - Kleding" },
+    { id: "Lg_ST5NT5k0", naam: "5 .2 - Kleren passen*", thema: "Thema 05 - Kleding" },
+    { id: "IsgZ4UdjgHw", naam: "5 .2 - Kleren passen**", thema: "Thema 05 - Kleding" },
+    { id: "hLAzuZIXXIE", naam: "5 .2 - Kleren passen***", thema: "Thema 05 - Kleding" },
+    { id: "Lg_ST5NT5k0", naam: "5 .3 - Iemands uiterlijk beschrijven*", thema: "Thema 05 - Kleding" },
+    { id: "IsgZ4UdjgHw", naam: "5 .3 - Iemands uiterlijk beschrijven**", thema: "Thema 05 - Kleding" },
+    { id: "hLAzuZIXXIE", naam: "5 .3 - Iemands uiterlijk beschrijven***", thema: "Thema 05 - Kleding" },
+    { id: "dWCz2H950aw", naam: "5 .4 - Iets ruilen of terugbrengen**", thema: "Thema 05 - Kleding" },
+    { id: "zxom02OWc6o", naam: "5 .4 - Iets ruilen of terugbrengen***", thema: "Thema 05 - Kleding" },
+    { id: "U2VjapkKpU4", naam: "6 .1 - Vertellen waar je woont*", thema: "Thema 06 - Wonen" },
+    { id: "x7tAvRT9XqQ", naam: "6 .1 - Vertellen waar je woont**", thema: "Thema 06 - Wonen" },
+    { id: "aF6nrFUdtDQ", naam: "6 .1 - Vertellen waar je woont***", thema: "Thema 06 - Wonen" },
+    { id: "tOXC93g8qbc", naam: "6 .2 - Je huis beschrijven (1)*", thema: "Thema 06 - Wonen" },
+    { id: "T5Z7IGwaUiw", naam: "6 .2 - Je huis beschrijven (1)**", thema: "Thema 06 - Wonen" },
+    { id: "TSa1KUPSWPQ", naam: "6 .2 - Je huis beschrijven (1)***", thema: "Thema 06 - Wonen" },
+    { id: "_ksytcJbkV8", naam: "6 .3 - Je huis beschrijven (2)*", thema: "Thema 06 - Wonen" },
+    { id: "4Pkz1h_ZXjE", naam: "6 .3 - Je huis beschrijven (2)**", thema: "Thema 06 - Wonen" },
+    { id: "GWTpNceRtoU", naam: "6 .3 - Je huis beschrijven (2)***", thema: "Thema 06 - Wonen" },
+    { id: "uWtIFHF-E3E", naam: "6 .4 - Problemen in huis beschrijven*", thema: "Thema 06 - Wonen" },
+    { id: "6GTg-TszYoA", naam: "6 .4 - Problemen in huis beschrijven**", thema: "Thema 06 - Wonen" },
+    { id: "rWcx7FPBN3k", naam: "6 .4 - Problemen in huis beschrijven***", thema: "Thema 06 - Wonen" },
+    { id: "QnKmUjtYMbI", naam: "6 .5 - Praten over het weer*", thema: "Thema 06 - Wonen" },
+    { id: "srOUHBlKcUo", naam: "6 .5 - Praten over het weer**", thema: "Thema 06 - Wonen" },
+    { id: "JkkaLC4Cdq4", naam: "6 .5 - Praten over het weer***", thema: "Thema 06 - Wonen" },
+    { id: "IQpwKKg5C6k", naam: "7 .1 - Praten over je vrije tijd (o.t.t.)*", thema: "Thema 07 - Vrije tijd" },
+    { id: "eR5AE6NGUZc", naam: "7 .1 - Praten over je vrije tijd (o.t.t.)**", thema: "Thema 07 - Vrije tijd" },
+    { id: "owinZlPArBg", naam: "7 .1 - Praten over je vrije tijd (o.t.t.)***", thema: "Thema 07 - Vrije tijd" },
+    { id: "fsi1brsv1b4", naam: "7 .2 - Praten over je vrije tijd (v.t.t.)*", thema: "Thema 07 - Vrije tijd" },
+    { id: "8Y1CGxJiyew", naam: "7 .2 - Praten over je vrije tijd (v.t.t.)**", thema: "Thema 07 - Vrije tijd" },
+    { id: "7E3jTEJADbE", naam: "7 .2 - Praten over je vrije tijd (v.t.t.)***", thema: "Thema 07 - Vrije tijd" },
+    { id: "CzQYLELHtaM", naam: "7 .3 - Praten over hobby&#39;s*", thema: "Thema 07 - Vrije tijd" },
+    { id: "qxTntiEGi20", naam: "7 .3 - Praten over hobby&#39;s**", thema: "Thema 07 - Vrije tijd" },
+    { id: "vFkylvjLHTA", naam: "7 .3 - Praten over hobby&#39;s***", thema: "Thema 07 - Vrije tijd" },
+    { id: "QDITPxy0nDA", naam: "7 .4 - Samen iets afspreken*", thema: "Thema 07 - Vrije tijd" },
+    { id: "BddMPISHLa8", naam: "7 .4 - Samen iets afspreken**", thema: "Thema 07 - Vrije tijd" },
+    { id: "A_xHfAPV78s", naam: "7 .4 - Samen iets afspreken***", thema: "Thema 07 - Vrije tijd" },
+    { id: "vRE5NByRuq4", naam: "7 .5 - Uitnodiging voor een feest*", thema: "Thema 07 - Vrije tijd" },
+    { id: "WgG63mO452U", naam: "7 .5 - Uitnodiging voor een feest**", thema: "Thema 07 - Vrije tijd" },
+    { id: "ZkY3iZNZPq0", naam: "7 .5 - Uitnodiging voor een feest***", thema: "Thema 07 - Vrije tijd" },
+    { id: "bHq7MGOZChI", naam: "7 .6 - Praten over activiteiten in de buurt*", thema: "Thema 07 - Vrije tijd" },
+    { id: "GFr9TiumIOo", naam: "7 .6 - Praten over activiteiten in de buurt**", thema: "Thema 07 - Vrije tijd" },
+    { id: "zILSMFgKqfg", naam: "7 .6 - Praten over activiteiten in de buurt***", thema: "Thema 07 - Vrije tijd" },
+    { id: "YKqxKA9sQnA", naam: "8 .1 - Praten over reizen*", thema: "Thema 08 - Reizen" },
+    { id: "WKh9es8kVOc", naam: "8 .1 - Praten over reizen**", thema: "Thema 08 - Reizen" },
+    { id: "Pemu4Q4W-oc", naam: "8 .1 - Praten over reizen***", thema: "Thema 08 - Reizen" },
+    { id: "WCC6qCodC_8", naam: "8 .2 - Reizen met het ov*", thema: "Thema 08 - Reizen" },
+    { id: "W9QE510zhwg", naam: "8 .2 - Reizen met het ov**", thema: "Thema 08 - Reizen" },
+    { id: "a411d_TLl3A", naam: "8 .2 - Reizen met het ov***", thema: "Thema 08 - Reizen" },
+    { id: "D5wvwXiLVAM", naam: "8 .3 - De weg vragen*", thema: "Thema 08 - Reizen" },
+    { id: "MuGKt1arUxU", naam: "8 .3 - De weg vragen**", thema: "Thema 08 - Reizen" },
+    { id: "Bsm_zlzO2-g", naam: "8 .3 - De weg vragen***", thema: "Thema 08 - Reizen" },
+    { id: "uUFlO5hvN94", naam: "8 .4 - Een gesprekje bij de bushalte*", thema: "Thema 08 - Reizen" },
+    { id: "r5sIt-xFX8A", naam: "8 .4 - Een gesprekje bij de bushalte**", thema: "Thema 08 - Reizen" },
+    { id: "b1V_cnxGejM", naam: "8 .4 - Een gesprekje bij de bushalte***", thema: "Thema 08 - Reizen" },
+    { id: "3EB6bu9jS20", naam: "9 .1 - Vertellen wat je kunt en leuk vindt*", thema: "Thema 09 - Werk" },
+    { id: "h6ZuOjnPzPM", naam: "9 .1 - Vertellen wat je kunt en leuk vindt**", thema: "Thema 09 - Werk" },
+    { id: "kHxG4F_TBBc", naam: "9 .1 - Vertellen wat je kunt en leuk vindt***", thema: "Thema 09 - Werk" },
+    { id: "qjTKwENYEag", naam: "9 .2 - Werk zoeken en vinden*", thema: "Thema 09 - Werk" },
+    { id: "_i9Aa_cKnvI", naam: "9 .2 - Werk zoeken en vinden**", thema: "Thema 09 - Werk" },
+    { id: "BujhLpdnz6c", naam: "9 .2 - Werk zoeken en vinden***", thema: "Thema 09 - Werk" },
+    { id: "HuacNFztA9U", naam: "9 .3 - Een sollicitatiegesprek voeren*", thema: "Thema 09 - Werk" },
+    { id: "z2av_C_WC_k", naam: "9 .3 - Een sollicitatiegesprek voeren**", thema: "Thema 09 - Werk" },
+    { id: "Zinn9cjQFxs", naam: "9 .3 - Een sollicitatiegesprek voeren***", thema: "Thema 09 - Werk" },
+    { id: "Tq9VlMmOEGM", naam: "9 .4 - Zich voorstellen op het werk*", thema: "Thema 09 - Werk" },
+    { id: "4pleVLhs_hY", naam: "9 .4 - Zich voorstellen op het werk**", thema: "Thema 09 - Werk" },
+    { id: "h6N3_DkqShs", naam: "9 .5 - Om hulp vragen**", thema: "Thema 09 - Werk" },
+    { id: "y8T4A9PDuVU", naam: "9 .5 - Om hulp vragen***", thema: "Thema 09 - Werk" },
+    { id: "Dgm1_moTD-Y", naam: "9 .6 - Zich ziek melden en vrij vragen*", thema: "Thema 09 - Werk" },
+    { id: "2C8K1hs1_CY", naam: "9 .6 - Zich ziek melden en vrij vragen**", thema: "Thema 09 - Werk" },
+    { id: "Sa4LaGetDgQ", naam: "9 .6 - Zich ziek melden en vrij vragen***", thema: "Thema 09 - Werk" },
+    { id: "PhSkZlDGo14", naam: "10 .1 - Praten over familie en kinderen*", thema: "Thema 10 - Kinderen" },
+    { id: "ocYQFzWyzgg", naam: "10 .1 - Praten over familie en kinderen**", thema: "Thema 10 - Kinderen" },
+    { id: "buzQfUdTKBg", naam: "10 .2 - Praten met andere ouders**", thema: "Thema 10 - Kinderen" },
+    { id: "zL0rXblzqEI", naam: "10 .2 - Praten met andere ouders***", thema: "Thema 10 - Kinderen" },
+    { id: "vHUtxTY6ucg", naam: "10 .3 - Helpen op school*", thema: "Thema 10 - Kinderen" },
+    { id: "oyjsEatWRXQ", naam: "10 .3 - Helpen op school**", thema: "Thema 10 - Kinderen" },
+    { id: "-tZTfpybhbo", naam: "10 .3 - Helpen op school***", thema: "Thema 10 - Kinderen" },
+    { id: "67ABJ6-B0jI", naam: "10 .4 - Praten over hoe het met je kind gaat*", thema: "Thema 10 - Kinderen" },
+    { id: "U1EYcwK2MuA", naam: "0 .4 - Praten over hoe het met je kind gaat**", thema: "Thema 10 - Kinderen" },
+    { id: "cAYceO6kHnQ", naam: "0 .4 - Praten over hoe het met je kind gaat***", thema: "Thema 10 - Kinderen" },
+    { id: "jwYCgUVc03o", naam: "0 .5 - Praten over hoe het op school gaat*", thema: "Thema 10 - Kinderen" },
+    { id: "J1j2QPzYATI", naam: "0 .5 - Praten over hoe het op school gaat**", thema: "Thema 10 - Kinderen" },
+    { id: "7dvtUsrOdS4", naam: "0 .5 - Praten over hoe het op school gaat***", thema: "Thema 10 - Kinderen" }
+        ];
+        const themas = [...new Set(videos.map(v => v.thema))];
+        let actiefThema = themas[0];
+        function init() {
+            const tabsEl = document.getElementById('thema-tabs');
+            themas.forEach(t => {
+                const btn = document.createElement('button');
+                btn.className = 'thema-tab' + (t === actiefThema ? ' actief' : '');
+                btn.textContent = t.replace('Thema ', 'T').replace(' - ', ' ');
+                btn.addEventListener('click', () => selecteerThema(t));
+                tabsEl.appendChild(btn);
+            });
+            maakKnoppen();
+        }
+        function selecteerThema(thema) {
+            actiefThema = thema;
+            document.querySelectorAll('.thema-tab').forEach((b, i) => b.classList.toggle('actief', themas[i] === thema));
+            maakKnoppen();
+        }
+        function maakKnoppen() {
+            const lijst = document.getElementById('knoppen-sectie');
+            lijst.innerHTML = '';
+            videos.filter(v => v.thema === actiefThema).forEach(video => {
+                const knop = document.createElement('button');
+                knop.className = 'video-knop';
+                const sterren = video.naam.includes('***') ? '***' : video.naam.includes('**') ? '**' : '*';
+                const basis = video.naam.replace(/\*+/, '').trim();
+                knop.innerHTML = '<span class="niveau-badge">' + sterren + '</span><span>' + basis + '</span>';
+                knop.addEventListener('click', () => speelAf(video, knop));
+                lijst.appendChild(knop);
+            });
+        }
+        
+        function speelAf(video, knop) {
+            document.getElementById('welkom').style.display = 'none';
+            document.getElementById('video-container').style.display = 'block';
+            const src = 'https://www.youtube-nocookie.com/embed/' + video.id + '?autoplay=0&iv_load_policy=3&loop=0&modestbranding=1&rel=0';
+            document.getElementById('youtube-iframe').src = src;
+            document.getElementById('video-title').textContent = video.naam;
+            document.querySelectorAll('.video-knop').forEach(b => b.classList.remove('actief'));
+            if (knop) knop.classList.add('actief');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('video-knoppen-balk').style.display = 'flex';
+        }
+        function verbergVideo() {
+            document.getElementById('video-container').style.display = 'none';
+            document.getElementById('welkom').style.display = 'block';
+            document.getElementById('youtube-iframe').src = '';
+            document.querySelectorAll('.video-knop').forEach(b => b.classList.remove('actief'));
+        }
+        function zetVolledigScherm() {
+            const el = document.getElementById('video-wrapper');
+            if (el.requestFullscreen) el.requestFullscreen();
+            else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+            else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+        }
+        function sluitVolledigScherm() {
+            if (document.exitFullscreen) document.exitFullscreen();
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+        }
+        function deelVideo() {
+            const iframe = document.getElementById('youtube-iframe');
+            const match = iframe.src.match(/embed\/([^?]+)/);
+            if (!match) return;
+            const link = window.location.origin + window.location.pathname + '?v=' + match[1];
+            navigator.clipboard.writeText(link).then(() => {
+                const knop = document.getElementById('deel-knop');
+                knop.textContent = '✓ Gekopieerd!';
+                setTimeout(() => knop.textContent = '🔗 Deel', 2000);
+            });
+        }
+
+        
+        const params = new URLSearchParams(window.location.search);
+        const directId = params.get('v');
+        if (directId) {
+            document.getElementById('welkom').style.display = 'none';
+            document.getElementById('nav-sectie').style.display = 'none';
+            document.getElementById('deel-knop').style.display = 'none';
+            document.getElementById('video-container').style.display = 'block';
+            const video = videos.find(v => v.id === directId);
+            const naam = video ? video.naam : directId;
+            const src = 'https://www.youtube-nocookie.com/embed/' + directId + '?autoplay=0&iv_load_policy=3&loop=0&modestbranding=1&rel=0';
+            document.getElementById('youtube-iframe').src = src;
+            document.getElementById('video-title').textContent = naam;
+        } else {
+            document.getElementById('nav-sectie').style.display = 'block';
+            init();
+        }
+
+    </script>
+</body>
+</html>
