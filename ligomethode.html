@@ -240,7 +240,7 @@
             const src = 'https://www.youtube-nocookie.com/embed/' + directId + '?autoplay=0&iv_load_policy=3&loop=0&modestbranding=1&rel=0';
             document.getElementById('youtube-iframe').src = src;
             document.getElementById('video-title').textContent = naam;
-            document.getElementById('alleVideos').appendChild(document.createTextNode(`Overzicht (${videos.length} video's)`);
+            document.getElementById('alleVideos').appendChild(document.createTextNode(`Overzicht (${videos.length} video's)`));
         } else {
             document.getElementById('nav-sectie').style.display = 'block';
             init();
