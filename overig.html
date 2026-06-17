@@ -47,7 +47,7 @@
         .nummer { flex-shrink: 0; background: #09b9bb; color: #fff; border-radius: 50%; width: 28px; height: 28px; line-height: 28px; text-align: center; font-size: 0.8rem; }
         .video-knop.actief .nummer { background: #056181; color: #fff; }
        #zoek-wrapper { flex-shrink: 0; display: flex; align-items: center; margin-left: auto; margin-top: 8px; }
-        #zoek-knop { background: #e8f6f7; border: 1px solid #09b9bb; color: #056181; border-radius: 6px; padding: 3px 8px; font-size: 0.82rem; cursor: pointer; }
+        #zoek-knop { background: #e8f6f7; border: 1px solid #09b9bb; color: #056181; border-radius: 6px; padding: 3px 50px; font-size: 0.82rem; cursor: pointer; }
         #zoek-knop:active { background: #09b9bb; color: #fff; }
         #zoek-input { display: none; width: 300px; padding: 12px; border: 1px solid #09b9bb; border-radius: 6px; font-family: Georgia, serif; font-size: 0.82rem; background: #ffffff; color: #1a3a4a; outline: none; }
         #zoek-input.open { display: block; }
@@ -617,30 +617,31 @@
         zoekVideos('');
     }
 }
-function zoekVideos(term) {
-    document.getElementById('zoek-wis-knop').classList.toggle('zichtbaar', term.trim().length > 0);
-    const zoekterm = term.trim().toLowerCase();
-    if (!zoekterm) {
-        maakKnoppen(); return;
-    }
-    const resultaten = videos.filter(v => v.naam.toLowerCase().includes(zoekterm));
-    const lijst = document.getElementById('knoppen-sectie');
-    lijst.innerHTML = '';
-    resultaten.forEach(video => {
-        const knop = document.createElement('button');
-        knop.className = 'video-knop';
-        const sterren = video.naam.includes('***') ? '***' : video.naam.includes('**') ? '**' : '*';
-        const basis = video.naam.replace(/\*+/, '').trim();
-        knop.innerHTML = '<span class="niveau-badge">' + sterren + '</span><span>' + basis + '</span>';
-        knop.addEventListener('click', () => speelAf(video, knop));
-        lijst.appendChild(knop);
-    });
-}
-        function wisZoekveld() {
+        function zoekVideos(term) {
+            document.getElementById('zoek-wis-knop').classList.toggle('zichtbaar', term.trim().length > 0);
+            const zoekterm = term.trim().toLowerCase();
+            if (!zoekterm) {
+                maakKnoppen(); return;
+            }
+            const resultaten = videos.filter(v => v.naam.toLowerCase().includes(zoekterm));
+            const lijst = document.getElementById('knoppen-lijst');
+            lijst.innerHTML = '';
+            document.getElementById('aantal-label').textContent = resultaten.length + " video's";
+            resultaten.forEach(video => {
+                const knop = document.createElement('button');
+                knop.className = 'video-knop';
+                knop.innerHTML = '<span class="thema-badge">' + video.thema + '</span><span>' + video.naam + '</span>';
+                knop.addEventListener('click', () => speelAf(video, knop));
+                lijst.appendChild(knop);
+            });
+        }
+
+function wisZoekveld() {
     const input = document.getElementById('zoek-input');
     input.value = '';
     zoekVideos('');
     document.getElementById('zoek-wis-knop').classList.remove('zichtbaar');
+    input.focus();
 }
 
         
