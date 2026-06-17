@@ -43,6 +43,8 @@
         #zoek-knop:active { background: #09b9bb; color: #fff; }
         #zoek-input { display: none; width: 130px; padding: 4px 8px; border: 1px solid #09b9bb; border-radius: 6px; font-family: Georgia, serif; font-size: 0.82rem; background: #ffffff; color: #1a3a4a; outline: none; margin-right: 6px; }
         #zoek-input.open { display: block; }
+        #zoek-wis-knop { display: none; background: none; border: none; color: #056181; font-size: 0.9rem; cursor: pointer; padding: 4px 6px; margin-left: -4px; }
+        #zoek-wis-knop.zichtbaar { display: inline-block; }
     </style>
 </head>
 <body>
@@ -77,6 +79,8 @@
             </select>
             <div id="zoek-wrapper">
                 <input id="zoek-input" type="text" placeholder="Zoeken..." oninput="zoekVideos(this.value)">
+                <input id="zoek-input" type="text" placeholder="Zoeken..." oninput="zoekVideos(this.value)">
+                <button id="zoek-wis-knop" onclick="wisZoekveld()">✕</button>   
                 <button id="zoek-knop" onclick="toggleZoek()">Zoek</button>
             </div>
         </div>
@@ -213,6 +217,7 @@
         }
 
         function zoekVideos(term) {
+            document.getElementById('zoek-wis-knop').classList.toggle('zichtbaar', term.trim().length > 0);
             const zoekterm = term.trim().toLowerCase();
             if (!zoekterm) { maakKnoppen(); return; }
             const resultaten = videos.filter(v => v.naam.toLowerCase().includes(zoekterm));
@@ -244,6 +249,13 @@
         } else {
             document.getElementById('nav-sectie').style.display = 'block';
             init();
+        }
+
+        function wisZoekveld() {
+            const input = document.getElementById('zoek-input');
+            input.value = '';
+            zoekVideos('');
+            document.getElementById('zoek-wis-knop').classList.remove('zichtbaar');
         }
     </script>
 </body>
