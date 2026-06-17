@@ -53,6 +53,21 @@
         #zoek-input.open { display: block; }
         #zoek-wis-knop { display: none; background: none; border: none; color: #056181; font-size: 0.9rem; cursor: pointer; padding: 4px 6px; margin-left: -4px; }
         #zoek-wis-knop.zichtbaar { display: inline-block; }
+        #thema-filter:focus { outline: none; border-color: #09b9bb; }
+       #thema-wis-knop {
+        display: none;
+        position: absolute;
+        left: 150px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #056181;
+        font-size: 0.9rem;
+        cursor: pointer;
+        padding: 2px 4px;
+    }
+    #thema-wis-knop.zichtbaar { display: inline-block; }
 </style>
 </head>
 <body>
@@ -73,6 +88,7 @@
     <div id="nav-sectie">
         <div id="filter-balk">
             <select id="thema-filter" onchange="filterThema()">
+                <button id="thema-wis-knop" onclick="wisThemaFilter()">✕</button>
                 <option value="">— Alle thema's (381 video's) —</option>
             <option value="Afspraak">Afspraak</option>
             <option value="Afval/klimaat">Afval/klimaat</option>
@@ -504,8 +520,12 @@
         ];
         
         let actiefThema = '';
+        
         function init() { maakKnoppen(); }
         function filterThema() {
+            const waarde = document.getElementById('thema-filter').value;
+            document.getElementById('thema-wis-knop').classList.toggle('zichtbaar', waarde !== '');
+
             actiefThema = document.getElementById('thema-filter').value;
             maakKnoppen();
         }
@@ -613,6 +633,13 @@ function zoekVideos(term) {
     input.value = '';
     zoekVideos('');
     document.getElementById('zoek-wis-knop').classList.remove('zichtbaar');
+}
+
+        
+function wisThemaFilter() {
+    document.getElementById('thema-filter').value = '';
+    filterThema();
+    document.getElementById('thema-wis-knop').classList.remove('zichtbaar');
 }
 
     </script>
