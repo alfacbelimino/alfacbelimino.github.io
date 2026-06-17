@@ -8,7 +8,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Georgia, serif; background: #f4f6f7; color: #1a3a4a; min-height: 100vh; display: flex; flex-direction: column; }
-
+        #thema-filter-wrapper { display: flex; gap: 7px; }
         #video-container { width: 100%; background: #000; display: none; }
         #video-title-balk { display: flex; align-items: center; justify-content: space-between; background: #056181; padding: 10px 14px; border-bottom: 1px solid #09b9bb; gap: 10px; }
         #video-title { font-size: 0.9rem; flex: 1; color: #ffffff; }
@@ -23,9 +23,9 @@
         #minimize-knop { flex: 1; padding: 12px 14px; background: #f0f8f8; border: none; color: #056181; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; border-top: 2px solid #09b9bb; border-left: 1px solid #09b9bb; letter-spacing: 0.04em; transition: background 0.2s; }
         #minimize-knop:active { background: #d0eaec; }
 
-        /* #welkom { padding: 28px 16px; text-align: center; color: #056181; background: #ffffff; border-bottom: 2px solid #09b9bb; }
+        #welkom { padding: 28px 16px; text-align: center; color: #056181; background: #ffffff; border-bottom: 2px solid #09b9bb; }
         #welkom .icoon { font-size: 2.5rem; margin-bottom: 12px; }
-        #welkom p { font-size: 0.95rem; line-height: 1.6; color: #4a6a7a; } */
+        #welkom p { font-size: 0.95rem; line-height: 1.6; color: #4a6a7a; }
 
         #thema-tabs { display: flex; overflow-x: auto; background: #ffffff; border-bottom: 2px solid #09b9bb; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         #thema-tabs::-webkit-scrollbar { display: none; }
@@ -49,7 +49,7 @@
        #zoek-wrapper { flex-shrink: 0; display: flex; align-items: center; margin-left: auto; margin-top: 8px; }
         #zoek-knop { background: #e8f6f7; border: 1px solid #09b9bb; color: #056181; border-radius: 6px; padding: 3px 8px; font-size: 0.82rem; cursor: pointer; }
         #zoek-knop:active { background: #09b9bb; color: #fff; }
-        #zoek-input { display: none; width: 130px; padding: 4px 8px; border: 1px solid #09b9bb; border-radius: 6px; font-family: Georgia, serif; font-size: 0.82rem; background: #ffffff; color: #1a3a4a; outline: none; margin-right: 6px; }
+        #zoek-input { display: none; width: 130px; padding: 12px; border: 1px solid #09b9bb; border-radius: 6px; font-family: Georgia, serif; font-size: 0.82rem; background: #ffffff; color: #1a3a4a; outline: none; }
         #zoek-input.open { display: block; }
         #zoek-wis-knop { display: none; background: none; border: none; color: #056181; font-size: 0.9rem; cursor: pointer; padding: 4px 6px; margin-left: -4px; }
         #zoek-wis-knop.zichtbaar { display: inline-block; }
@@ -77,8 +77,8 @@
 </head>
 <body>
     <div id="welkom">
-        <div class="icoon">🎬</div>
-        <p>Kies een video</p>
+<!--        <div class="icoon">🎬</div>-->
+<!--        <p>Kies een video</p>-->
     </div>
     
     <div id="video-container">
@@ -132,8 +132,6 @@
             <option value="Winkel">Winkel</option>
             <option value="Wonen">Wonen</option>
             </select>
-            </div>
-              <div id="zoek-wrapper">
             <input id="zoek-input" type="text" placeholder="Zoeken..." oninput="zoekVideos(this.value)">
             <button id="zoek-wis-knop" onclick="wisZoekveld()">✕</button>
             <button id="zoek-knop" onclick="toggleZoek()">Zoek</button>
