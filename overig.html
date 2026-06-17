@@ -37,7 +37,7 @@
         #filter-balk { padding: 12px 14px; background: #ffffff; border-bottom: 2px solid #09b9bb; flex-wrap: wrap; }
         #filter-balk select { width: 100%; padding: 10px 12px; background: #ffffff; color: #1a3a4a; border: 1.5px solid #09b9bb; border-radius: 8px; font-family: Georgia, serif; font-size: 0.95rem; cursor: pointer; }
 
-        .video-knop { display: flex; align-items: center; width: 100%; padding: 14px 16px; margin-bottom: 10px; background: #ffffff; border: 2px solid #d0e8ec; border-radius: 10px; color: #1a3a4a; font-size: 0.95rem; font-family: Georgia, serif; text-align: left; cursor: pointer; gap: 12px; transition: background 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; line-height: 1.4; box-shadow: 0 1px 3px rgba(5,97,129,0.07); }
+        .video-knop { display: flex; align-items: center; width: 100%; padding: 14px 16px; margin-bottom: 10px; background: #ffffff; border: 2px solid #09b9bb; border-radius: 10px; color: #1a3a4a; font-size: 0.95rem; font-family: Georgia, serif; text-align: left; cursor: pointer; gap: 12px; transition: background 0.2s, border-color 0.2s; -webkit-tap-highlight-color: transparent; line-height: 1.4; box-shadow: 0 1px 3px rgba(5,97,129,0.07); }
         .video-knop:active { transform: scale(0.98); }
         .video-knop.actief { background: #e8f6f7; border-color: #09b9bb; }
         .niveau-badge { flex-shrink: 0; background: #09b9bb; color: #fff; border-radius: 6px; padding: 2px 7px; font-size: 0.8rem; }
@@ -502,6 +502,7 @@
     { id: "JV_7iA3vvb0", naam: "Ik eet graag ongezond! (NT2 Breakthrough, #NT2, 1.1, A1)", thema: "Eten en drinken" },
     { id: "1p0m7VY2NlY", naam: "Zita en Anna (NT2 Breakthrough/Waystage, #NT2, 1.1, A1, 1.2, A2)", thema: "Niet opgegeven" }
         ];
+        
         let actiefThema = '';
         function init() { maakKnoppen(); }
         function filterThema() {
@@ -533,18 +534,21 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
             document.getElementById('video-knoppen-balk').style.display = 'flex';
         }
+        
         function zetVolledigScherm() {
             const el = document.getElementById('video-wrapper');
             if (el.requestFullscreen) el.requestFullscreen();
             else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
             else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
         }
+        
         function verbergVideo() {
             document.getElementById('video-container').style.display = 'none';
             document.getElementById('welkom').style.display = 'block';
             document.getElementById('youtube-iframe').src = '';
             document.querySelectorAll('.video-knop').forEach(b => b.classList.remove('actief'));
         }
+        
         function deelVideo() {
             const iframe = document.getElementById('youtube-iframe');
             const match = iframe.src.match(/embed\/([^?]+)/);
