@@ -95,6 +95,7 @@
     </div>
     <div id="nav-sectie">
         <div id="filter-balk">
+            <div id="thema-filter-wrapper">
             <button id="thema-wis-knop" onclick="wisThemaFilter()">✕</button>
             <select id="thema-filter" onchange="filterThema()">                
                 <option value="">— Alle thema's (381 video's) —</option>
@@ -131,6 +132,7 @@
             <option value="Winkel">Winkel</option>
             <option value="Wonen">Wonen</option>
             </select>
+            </div>
               <div id="zoek-wrapper">
             <input id="zoek-input" type="text" placeholder="Zoeken..." oninput="zoekVideos(this.value)">
             <button id="zoek-wis-knop" onclick="wisZoekveld()">✕</button>
